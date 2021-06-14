@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fang.hotel_order_system.mapper.OrdersMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fang.hotel_order_system.entity.Orders">
+        <id column="orders_id" property="ordersId" />
+        <result column="user_id" property="userId" />
+        <result column="hotel_id" property="hotelId" />
+        <result column="room_id" property="roomId" />
+        <result column="in_time" property="inTime" />
+        <result column="out_time" property="outTime" />
+        <result column="price" property="price" />
+        <result column="status" property="status" />
+        <result column="order_time" property="orderTime" />
+    </resultMap>
+
+</mapper>
