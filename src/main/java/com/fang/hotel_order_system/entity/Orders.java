@@ -41,6 +41,12 @@ public class Orders extends Model<Orders> {
     @ApiModelProperty(value = "房间编号")
     private Long roomId;
 
+    @ApiModelProperty(value = "状态编号")
+    private Integer statusId;
+
+    @ApiModelProperty(value = "房间数量")
+    private Integer quantity;
+
     @ApiModelProperty(value = "入住时间")
     private LocalDateTime inTime;
 
@@ -49,9 +55,6 @@ public class Orders extends Model<Orders> {
 
     @ApiModelProperty(value = "价格")
     private Double price;
-
-    @ApiModelProperty(value = "订单状态 0未完成 1已取消 2超时未支付 3已完成")
-    private Integer status;
 
     @ApiModelProperty(value = "下单时间")
     private LocalDateTime orderTime;

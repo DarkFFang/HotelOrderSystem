@@ -1,5 +1,8 @@
 package com.fang.hotel_order_system.security;
 
+import com.fang.hotel_order_system.filter.JwtAuthenticationTokenFilter;
+import com.fang.hotel_order_system.filter.JwtUsernamePasswordAuthenticationFilter;
+import com.fang.hotel_order_system.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,11 +32,24 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-        /**
+    /**
      * 用户详细信息服务
      */
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PermissionService permissionService;
+
+    /**
+     * 密码编码器
+     *
+     * @return {@link PasswordEncoder}
+     */
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 
     /**
@@ -55,7 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.cors()
+                .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -70,23 +87,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .headers().frameOptions().disable();
 
-        http.formLogin()
-                .usernameParameter("phone")
-                .passwordParameter("password")
-                .permitAll();
+        http.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationTokenFilter(authenticationManager(),permissionService));
+
 
         http.logout()
                 .logoutUrl("/logout");
 
     }
 
-    /**
-     * 密码编码器
-     *
-     * @return {@link PasswordEncoder}
-     */
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

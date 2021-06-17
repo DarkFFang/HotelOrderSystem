@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Value;
 import lombok.experimental.Accessors;
 
 /**
@@ -37,6 +38,9 @@ public class Comment extends Model<Comment> {
 
     @ApiModelProperty(value = "用户编号")
     private Long userId;
+
+    @ApiModelProperty(value = "订单编号")
+    private Long ordersId;
 
     @ApiModelProperty(value = "评论内容")
     private String content;

@@ -43,6 +43,9 @@ public class Room extends Model<Room> {
     @ApiModelProperty(value = "床型编号")
     private Long bedId;
 
+    @ApiModelProperty(value = "房间价格")
+    private Integer price;
+
     @ApiModelProperty(value = "房间剩余数量")
     private Integer remainQuantity;
 

@@ -1,6 +1,6 @@
 package com.fang.hotel_order_system.util;
 
-import com.fang.marketmanage.entity.JwtUser;
+import com.fang.hotel_order_system.entity.JwtUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,13 +31,14 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+
     public static String createToken(JwtUser jwtUser) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", jwtUser.getId());
+        claims.put("user_id", jwtUser.getUser().getUserId());
         claims.put("username", jwtUser.getUsername());
-        claims.put("phone", jwtUser.getPhone());
         return createToken(claims);
     }
+
 
     private static Claims getTokenClaims(String token) {
         return Jwts.parser()
@@ -51,14 +52,9 @@ public class JwtTokenUtil {
         return getTokenClaims(token).get("username").toString();
     }
 
-    public static Integer getUserIdFromToken(String token) {
-        return Integer.valueOf(getTokenClaims(token).get("id").toString());
+    public static Long getUserIdFromToken(String token) {
+        return Long.valueOf(getTokenClaims(token).get("user_id").toString());
     }
-
-    public static String getPhoneFromToken(String token) {
-        return getTokenClaims(token).get("phone").toString();
-    }
-
 
     // 是否已过期
     public static boolean isExpiration(String token) {
@@ -73,10 +69,11 @@ public class JwtTokenUtil {
         return refreshedToken;
     }
 
-    public static boolean validateToken(String token, UserDetails userDetails) {
-        JwtUser user = (JwtUser) userDetails;
-        String username = getUsernameFromToken(token);
-        return (username.equals(user.getUsername()) && !isExpiration(token));
+
+    public static boolean validateToken(String token, String username) {
+        String usernameFromToken = getUsernameFromToken(token);
+        return (usernameFromToken.equals(username) && !isExpiration(token));
     }
+
 
 }

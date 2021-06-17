@@ -10,5 +10,14 @@
         <result column="value" property="value" />
         <result column="url" property="url" />
     </resultMap>
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT p.*
+        FROM user u
+        LEFT JOIN user_role ur ON u.user_id=ur.user_id
+        LEFT JOIN role r ON ur.role_id=r.role_id
+        LEFT JOIN role_permission rp ON rp.role_id=r.role_id
+        LEFT JOIN permission p ON p.permission_id =rp.permission_id
+        WHERE u.user_id=#{userId}
+    </select>
 
 </mapper>

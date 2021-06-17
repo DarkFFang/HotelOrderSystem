@@ -38,6 +38,9 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "用户密码")
     private String password;
 
+    @ApiModelProperty(value = "用户昵称")
+    private String nickname;
+
     @ApiModelProperty(value = "手机号码")
     private String phone;
 

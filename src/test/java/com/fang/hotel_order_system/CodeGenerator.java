@@ -128,6 +128,7 @@ public class CodeGenerator {
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();
 
+/*
         // 如果模板引擎是 freemarker
         String templatePath = "/templates/mapper.xml.ftl";
         // 自定义配置会被优先输出
@@ -141,7 +142,9 @@ public class CodeGenerator {
 
         });
 
+*/
 
+/*
         // 如果模板引擎是 freemarker
         String entityPath = "/templates/entity.java.ftl";
         // 自定义配置会被优先输出
@@ -154,6 +157,7 @@ public class CodeGenerator {
             }
 
         });
+*/
 
         // 如果模板引擎是 freemarker
         String controllerPath = "/templates/controller.java.ftl";

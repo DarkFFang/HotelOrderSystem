@@ -2,6 +2,7 @@ package com.fang.hotel_order_system.service;
 
 import com.fang.hotel_order_system.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * <p>
@@ -11,6 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author fang
  * @since 2021-06-14
  */
-public interface UserService extends IService<User> {
+public interface UserService extends IService<User>, UserDetailsService {
 
 }

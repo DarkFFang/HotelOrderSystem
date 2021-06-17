@@ -2,6 +2,7 @@ package com.fang.hotel_order_system.mapper;
 
 import com.fang.hotel_order_system.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Component;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author fang
  * @since 2021-06-14
  */
+@Component
 public interface RoleMapper extends BaseMapper<Role> {
 
 }

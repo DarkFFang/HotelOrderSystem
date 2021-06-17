@@ -3,6 +3,8 @@ package com.fang.hotel_order_system.mapper;
 import com.fang.hotel_order_system.entity.Permission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface PermissionMapper extends BaseMapper<Permission> {
 
+    List<Permission> selectListByUserId(Long userId);
 }

@@ -47,11 +47,9 @@ public class BedController {
     /**
      * 描述：根据Id 更新
      */
-    @PutMapping("/{id}")
-    public JsonResponse updateBed(@PathVariable("id") Long id, Bed bed) throws Exception {
-        bed.setBedId(id);
-        bedService.updateById(bed);
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateBed(Bed bed) throws Exception {
+        return JsonResponse.success(bedService.updateById(bed));
     }
 
 
