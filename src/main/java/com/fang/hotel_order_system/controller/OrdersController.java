@@ -10,6 +10,8 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.OrdersService;
 import com.fang.hotel_order_system.entity.Orders;
 
+import java.util.List;
+
 
 /**
  *
@@ -17,7 +19,7 @@ import com.fang.hotel_order_system.entity.Orders;
  *
  *
  * @author fang
- * @since 2021-06-14
+ * @since 2021-06-17
  * @version v1.0
  */
 @RestController
@@ -30,12 +32,21 @@ public class OrdersController {
     private OrdersService ordersService;
 
     /**
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<Orders> ordersList =  ordersService.list();
+        return JsonResponse.success(ordersList);
+    }
+    /**
     * 描述：根据Id 查询
     *
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        Orders  orders =  ordersService.getById(id);
+        Orders orders =  ordersService.getById(id);
         return JsonResponse.success(orders);
     }
 
@@ -45,8 +56,11 @@ public class OrdersController {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        ordersService.removeById(id);
-        return JsonResponse.success(null);
+        if(ordersService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
@@ -54,11 +68,13 @@ public class OrdersController {
     * 描述：根据Id 更新
     *
     */
-    @PutMapping("/{id}")
-    public JsonResponse updateOrders(@PathVariable("id") Long  id,Orders  orders) throws Exception {
-        orders.setOrdersId(id);
-        ordersService.updateById(orders);
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateByIdOrders(Orders  orders) throws Exception {
+        if(ordersService.updateById(orders)){
+            return JsonResponse.success(orders, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
@@ -68,8 +84,13 @@ public class OrdersController {
     */
     @PostMapping("")
     public JsonResponse create(Orders  orders) throws Exception {
-        ordersService.save(orders);
-        return JsonResponse.success(null);
+        if(ordersService.save(orders)){
+            return JsonResponse.success(orders, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

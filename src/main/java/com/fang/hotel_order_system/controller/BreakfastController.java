@@ -10,60 +10,87 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.BreakfastService;
 import com.fang.hotel_order_system.entity.Breakfast;
 
+import java.util.List;
+
 
 /**
- * 前端控制器
+ *
+ *  前端控制器
+ *
  *
  * @author fang
+ * @since 2021-06-17
  * @version v1.0
- * @since 2021-06-14
  */
 @RestController
 @RequestMapping("/api/breakfast")
 public class BreakfastController {
 
-    private final Logger logger = LoggerFactory.getLogger(BreakfastController.class);
+    private final Logger logger = LoggerFactory.getLogger( BreakfastController.class );
 
     @Autowired
     private BreakfastService breakfastService;
 
     /**
-     * 描述：根据Id 查询
-     */
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<Breakfast> breakfastList =  breakfastService.list();
+        return JsonResponse.success(breakfastList);
+    }
+    /**
+    * 描述：根据Id 查询
+    *
+    */
     @GetMapping("/{id}")
-    public JsonResponse getById(@PathVariable("id") Long id) throws Exception {
-        Breakfast breakfast = breakfastService.getById(id);
+    public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
+        Breakfast breakfast =  breakfastService.getById(id);
         return JsonResponse.success(breakfast);
     }
 
     /**
-     * 描述：根据Id删除
-     */
+    * 描述：根据Id删除
+    *
+    */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        breakfastService.removeById(id);
-        return JsonResponse.success(null);
+        if(breakfastService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
     /**
-     * 描述：根据Id 更新
-     */
-    @PutMapping("/{id}")
-    public JsonResponse updateBreakfast(@PathVariable("id") Long id, Breakfast breakfast) throws Exception {
-        breakfast.setBreakfastId(id);
-        breakfastService.updateById(breakfast);
-        return JsonResponse.success(null);
+    * 描述：根据Id 更新
+    *
+    */
+    @PutMapping("")
+    public JsonResponse updateByIdBreakfast(Breakfast  breakfast) throws Exception {
+        if(breakfastService.updateById(breakfast)){
+            return JsonResponse.success(breakfast, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
     /**
-     * 描述:创建Breakfast
-     */
+    * 描述:创建Breakfast
+    *
+    */
     @PostMapping("")
-    public JsonResponse create(Breakfast breakfast) throws Exception {
-        breakfastService.save(breakfast);
-        return JsonResponse.success(null);
+    public JsonResponse create(Breakfast  breakfast) throws Exception {
+        if(breakfastService.save(breakfast)){
+            return JsonResponse.success(breakfast, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

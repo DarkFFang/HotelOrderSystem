@@ -10,6 +10,8 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.HotelService;
 import com.fang.hotel_order_system.entity.Hotel;
 
+import java.util.List;
+
 
 /**
  *
@@ -17,7 +19,7 @@ import com.fang.hotel_order_system.entity.Hotel;
  *
  *
  * @author fang
- * @since 2021-06-14
+ * @since 2021-06-17
  * @version v1.0
  */
 @RestController
@@ -30,12 +32,21 @@ public class HotelController {
     private HotelService hotelService;
 
     /**
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<Hotel> hotelList =  hotelService.list();
+        return JsonResponse.success(hotelList);
+    }
+    /**
     * 描述：根据Id 查询
     *
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        Hotel  hotel =  hotelService.getById(id);
+        Hotel hotel =  hotelService.getById(id);
         return JsonResponse.success(hotel);
     }
 
@@ -45,8 +56,11 @@ public class HotelController {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        hotelService.removeById(id);
-        return JsonResponse.success(null);
+        if(hotelService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
@@ -54,11 +68,13 @@ public class HotelController {
     * 描述：根据Id 更新
     *
     */
-    @PutMapping("/{id}")
-    public JsonResponse updateHotel(@PathVariable("id") Long  id,Hotel  hotel) throws Exception {
-        hotel.setHotelId(id);
-        hotelService.updateById(hotel);
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateByIdHotel(Hotel  hotel) throws Exception {
+        if(hotelService.updateById(hotel)){
+            return JsonResponse.success(hotel, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
@@ -68,8 +84,13 @@ public class HotelController {
     */
     @PostMapping("")
     public JsonResponse create(Hotel  hotel) throws Exception {
-        hotelService.save(hotel);
-        return JsonResponse.success(null);
+        if(hotelService.save(hotel)){
+            return JsonResponse.success(hotel, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

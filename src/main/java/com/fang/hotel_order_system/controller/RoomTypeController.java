@@ -10,6 +10,8 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.RoomTypeService;
 import com.fang.hotel_order_system.entity.RoomType;
 
+import java.util.List;
+
 
 /**
  *
@@ -17,7 +19,7 @@ import com.fang.hotel_order_system.entity.RoomType;
  *
  *
  * @author fang
- * @since 2021-06-14
+ * @since 2021-06-17
  * @version v1.0
  */
 @RestController
@@ -30,12 +32,21 @@ public class RoomTypeController {
     private RoomTypeService roomTypeService;
 
     /**
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<RoomType> roomTypeList =  roomTypeService.list();
+        return JsonResponse.success(roomTypeList);
+    }
+    /**
     * 描述：根据Id 查询
     *
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        RoomType  roomType =  roomTypeService.getById(id);
+        RoomType roomType =  roomTypeService.getById(id);
         return JsonResponse.success(roomType);
     }
 
@@ -45,8 +56,11 @@ public class RoomTypeController {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        roomTypeService.removeById(id);
-        return JsonResponse.success(null);
+        if(roomTypeService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
@@ -54,11 +68,13 @@ public class RoomTypeController {
     * 描述：根据Id 更新
     *
     */
-    @PutMapping("/{id}")
-    public JsonResponse updateRoomType(@PathVariable("id") Long  id,RoomType  roomType) throws Exception {
-        roomType.setRoomTypeId(id);
-        roomTypeService.updateById(roomType);
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateByIdRoomType(RoomType  roomType) throws Exception {
+        if(roomTypeService.updateById(roomType)){
+            return JsonResponse.success(roomType, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
@@ -68,8 +84,13 @@ public class RoomTypeController {
     */
     @PostMapping("")
     public JsonResponse create(RoomType  roomType) throws Exception {
-        roomTypeService.save(roomType);
-        return JsonResponse.success(null);
+        if(roomTypeService.save(roomType)){
+            return JsonResponse.success(roomType, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

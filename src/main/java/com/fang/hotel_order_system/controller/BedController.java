@@ -1,65 +1,96 @@
 package com.fang.hotel_order_system.controller;
 
-import com.fang.hotel_order_system.entity.Bed;
-import com.fang.hotel_order_system.service.BedService;
-import com.fang.hotel_order_system.util.JsonResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.fang.hotel_order_system.util.JsonResponse;
+import com.fang.hotel_order_system.service.BedService;
+import com.fang.hotel_order_system.entity.Bed;
+
+import java.util.List;
 
 
 /**
- * 前端控制器
+ *
+ *  前端控制器
+ *
  *
  * @author fang
+ * @since 2021-06-17
  * @version v1.0
- * @since 2021-06-14
  */
 @RestController
 @RequestMapping("/api/bed")
 public class BedController {
 
-    private final Logger logger = LoggerFactory.getLogger(BedController.class);
+    private final Logger logger = LoggerFactory.getLogger( BedController.class );
 
     @Autowired
     private BedService bedService;
 
     /**
-     * 描述：根据Id 查询
-     */
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<Bed> bedList =  bedService.list();
+        return JsonResponse.success(bedList);
+    }
+    /**
+    * 描述：根据Id 查询
+    *
+    */
     @GetMapping("/{id}")
-    public JsonResponse getById(@PathVariable("id") Long id) throws Exception {
-        Bed bed = bedService.getById(id);
+    public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
+        Bed bed =  bedService.getById(id);
         return JsonResponse.success(bed);
     }
 
     /**
-     * 描述：根据Id删除
-     */
+    * 描述：根据Id删除
+    *
+    */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        bedService.removeById(id);
-        return JsonResponse.success(null);
+        if(bedService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
     /**
-     * 描述：根据Id 更新
-     */
+    * 描述：根据Id 更新
+    *
+    */
     @PutMapping("")
-    public JsonResponse updateBed(Bed bed) throws Exception {
-        return JsonResponse.success(bedService.updateById(bed));
+    public JsonResponse updateByIdBed(Bed  bed) throws Exception {
+        if(bedService.updateById(bed)){
+            return JsonResponse.success(bed, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
     /**
-     * 描述:创建Bed
-     */
+    * 描述:创建Bed
+    *
+    */
     @PostMapping("")
-    public JsonResponse create(Bed bed) throws Exception {
-        bedService.save(bed);
-        return JsonResponse.success(null);
+    public JsonResponse create(Bed  bed) throws Exception {
+        if(bedService.save(bed)){
+            return JsonResponse.success(bed, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

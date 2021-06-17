@@ -10,6 +10,8 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.UserRoleService;
 import com.fang.hotel_order_system.entity.UserRole;
 
+import java.util.List;
+
 
 /**
  *
@@ -17,7 +19,7 @@ import com.fang.hotel_order_system.entity.UserRole;
  *
  *
  * @author fang
- * @since 2021-06-14
+ * @since 2021-06-17
  * @version v1.0
  */
 @RestController
@@ -30,12 +32,21 @@ public class UserRoleController {
     private UserRoleService userRoleService;
 
     /**
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<UserRole> userRoleList =  userRoleService.list();
+        return JsonResponse.success(userRoleList);
+    }
+    /**
     * 描述：根据Id 查询
     *
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        UserRole  userRole =  userRoleService.getById(id);
+        UserRole userRole =  userRoleService.getById(id);
         return JsonResponse.success(userRole);
     }
 
@@ -45,8 +56,11 @@ public class UserRoleController {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        userRoleService.removeById(id);
-        return JsonResponse.success(null);
+        if(userRoleService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
@@ -54,11 +68,13 @@ public class UserRoleController {
     * 描述：根据Id 更新
     *
     */
-    @PutMapping("/{id}")
-    public JsonResponse updateUserRole(@PathVariable("id") Long  id,UserRole  userRole) throws Exception {
-        userRole.setUserRoleId(id);
-        userRoleService.updateById(userRole);
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateByIdUserRole(UserRole  userRole) throws Exception {
+        if(userRoleService.updateById(userRole)){
+            return JsonResponse.success(userRole, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
@@ -68,8 +84,13 @@ public class UserRoleController {
     */
     @PostMapping("")
     public JsonResponse create(UserRole  userRole) throws Exception {
-        userRoleService.save(userRole);
-        return JsonResponse.success(null);
+        if(userRoleService.save(userRole)){
+            return JsonResponse.success(userRole, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

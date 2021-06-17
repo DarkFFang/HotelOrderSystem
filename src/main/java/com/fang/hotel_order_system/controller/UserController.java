@@ -10,6 +10,8 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.UserService;
 import com.fang.hotel_order_system.entity.User;
 
+import java.util.List;
+
 
 /**
  *
@@ -17,7 +19,7 @@ import com.fang.hotel_order_system.entity.User;
  *
  *
  * @author fang
- * @since 2021-06-14
+ * @since 2021-06-17
  * @version v1.0
  */
 @RestController
@@ -30,12 +32,21 @@ public class UserController {
     private UserService userService;
 
     /**
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<User> userList =  userService.list();
+        return JsonResponse.success(userList);
+    }
+    /**
     * 描述：根据Id 查询
     *
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        User  user =  userService.getById(id);
+        User user =  userService.getById(id);
         return JsonResponse.success(user);
     }
 
@@ -45,8 +56,11 @@ public class UserController {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        userService.removeById(id);
-        return JsonResponse.success(null);
+        if(userService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
@@ -54,11 +68,13 @@ public class UserController {
     * 描述：根据Id 更新
     *
     */
-    @PutMapping("/{id}")
-    public JsonResponse updateUser(@PathVariable("id") Long  id,User  user) throws Exception {
-        user.setUserId(id);
-        userService.updateById(user);
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateByIdUser(User  user) throws Exception {
+        if(userService.updateById(user)){
+            return JsonResponse.success(user, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
@@ -68,8 +84,13 @@ public class UserController {
     */
     @PostMapping("")
     public JsonResponse create(User  user) throws Exception {
-        userService.save(user);
-        return JsonResponse.success(null);
+        if(userService.save(user)){
+            return JsonResponse.success(user, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

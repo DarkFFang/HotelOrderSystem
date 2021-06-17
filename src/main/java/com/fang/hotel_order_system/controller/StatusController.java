@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.fang.hotel_order_system.util.JsonResponse;
-import com.fang.hotel_order_system.service.PermissionService;
-import com.fang.hotel_order_system.entity.Permission;
+import com.fang.hotel_order_system.service.StatusService;
+import com.fang.hotel_order_system.entity.Status;
 
 import java.util.List;
 
@@ -23,13 +23,13 @@ import java.util.List;
  * @version v1.0
  */
 @RestController
-@RequestMapping("/api/permission")
-public class PermissionController {
+@RequestMapping("/api/status")
+public class StatusController {
 
-    private final Logger logger = LoggerFactory.getLogger( PermissionController.class );
+    private final Logger logger = LoggerFactory.getLogger( StatusController.class );
 
     @Autowired
-    private PermissionService permissionService;
+    private StatusService statusService;
 
     /**
     * 描述：查询整个列表
@@ -37,8 +37,8 @@ public class PermissionController {
     */
     @GetMapping("")
     public JsonResponse getList()throws Exception {
-        List<Permission> permissionList =  permissionService.list();
-        return JsonResponse.success(permissionList);
+        List<Status> statusList =  statusService.list();
+        return JsonResponse.success(statusList);
     }
     /**
     * 描述：根据Id 查询
@@ -46,8 +46,8 @@ public class PermissionController {
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        Permission permission =  permissionService.getById(id);
-        return JsonResponse.success(permission);
+        Status status =  statusService.getById(id);
+        return JsonResponse.success(status);
     }
 
     /**
@@ -56,7 +56,7 @@ public class PermissionController {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        if(permissionService.removeById(id)){
+        if(statusService.removeById(id)){
             return JsonResponse.successMessage("删除成功！");
         }else{
             return JsonResponse.failure("删除失败！");
@@ -69,9 +69,9 @@ public class PermissionController {
     *
     */
     @PutMapping("")
-    public JsonResponse updateByIdPermission(Permission  permission) throws Exception {
-        if(permissionService.updateById(permission)){
-            return JsonResponse.success(permission, "修改成功！");
+    public JsonResponse updateByIdStatus(Status  status) throws Exception {
+        if(statusService.updateById(status)){
+            return JsonResponse.success(status, "修改成功！");
         }else{
             return JsonResponse.failure("修改失败！");
         }
@@ -79,13 +79,13 @@ public class PermissionController {
 
 
     /**
-    * 描述:创建Permission
+    * 描述:创建Status
     *
     */
     @PostMapping("")
-    public JsonResponse create(Permission  permission) throws Exception {
-        if(permissionService.save(permission)){
-            return JsonResponse.success(permission, "添加成功！");
+    public JsonResponse create(Status  status) throws Exception {
+        if(statusService.save(status)){
+            return JsonResponse.success(status, "添加成功！");
         }else{
             return JsonResponse.failure("添加失败！");
         }

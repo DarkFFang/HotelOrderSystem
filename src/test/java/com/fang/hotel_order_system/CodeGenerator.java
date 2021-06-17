@@ -92,7 +92,7 @@ public class CodeGenerator {
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
         gc.setOutputDir(projectPath + "/src/main/java"); // 输出文件目录
-        gc.setFileOverride(true); // 是否覆盖已有文件
+        gc.setFileOverride(false); // 是否覆盖已有文件
         gc.setOpen(false); // 是否打开输出目录
         gc.setAuthor(author);
         gc.setSwagger2(true);  // 实体属性 Swagger2 注解
@@ -128,7 +128,6 @@ public class CodeGenerator {
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();
 
-/*
         // 如果模板引擎是 freemarker
         String templatePath = "/templates/mapper.xml.ftl";
         // 自定义配置会被优先输出
@@ -142,9 +141,7 @@ public class CodeGenerator {
 
         });
 
-*/
 
-/*
         // 如果模板引擎是 freemarker
         String entityPath = "/templates/entity.java.ftl";
         // 自定义配置会被优先输出
@@ -157,7 +154,6 @@ public class CodeGenerator {
             }
 
         });
-*/
 
         // 如果模板引擎是 freemarker
         String controllerPath = "/templates/controller.java.ftl";
@@ -190,7 +186,7 @@ public class CodeGenerator {
        // strategy.setSuperControllerClass("com.fang.mybatisplus.common.BaseController");
         strategy.setEntityLombokModel(true);//启用lombok注解
         strategy.setChainModel(true);//启用lombok链式注解
-        strategy.setInclude("bed","breakfast","city","comment","country","hotel","orders","permission","role","role_permission","room","room_type","user","user_role");
+        strategy.setInclude("bed","breakfast","city","comment","country","hotel","orders","permission","role","role_permission","room","room_type","user","user_role","status");
 
        //strategy.setTablePrefix("caps_");//去表前缀配置
 

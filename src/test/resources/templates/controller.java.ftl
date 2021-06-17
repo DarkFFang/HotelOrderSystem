@@ -10,6 +10,8 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import ${package.Service}.${table.serviceName};
 import ${package.Entity}.${entity};
 
+import java.util.List;
+
 
 /**
  *
@@ -30,12 +32,21 @@ public class ${table.controllerName} {
     private ${entity}Service ${entity?uncap_first}Service;
 
     /**
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<${entity}> ${entity?uncap_first}List =  ${entity?uncap_first}Service.list();
+        return JsonResponse.success(${entity?uncap_first}List);
+    }
+    /**
     * 描述：根据Id 查询
     *
     */
     @GetMapping("/{id}")
     public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        ${entity}  ${entity?uncap_first} =  ${entity?uncap_first}Service.getById(id);
+        ${entity} ${entity?uncap_first} =  ${entity?uncap_first}Service.getById(id);
         return JsonResponse.success(${entity?uncap_first});
     }
 
@@ -45,8 +56,11 @@ public class ${table.controllerName} {
     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        ${entity?uncap_first}Service.removeById(id);
-        return JsonResponse.success(null);
+        if(${entity?uncap_first}Service.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
@@ -54,11 +68,13 @@ public class ${table.controllerName} {
     * 描述：根据Id 更新
     *
     */
-    @PutMapping("/{id}")
-    public JsonResponse update${entity}(@PathVariable("id") Long  id,${entity}  ${entity?uncap_first}) throws Exception {
-        ${entity?uncap_first}.set${entity}Id(id);
-        ${entity?uncap_first}Service.updateById(${entity?uncap_first});
-        return JsonResponse.success(null);
+    @PutMapping("")
+    public JsonResponse updateById${entity}(${entity}  ${entity?uncap_first}) throws Exception {
+        if(${entity?uncap_first}Service.updateById(${entity?uncap_first})){
+            return JsonResponse.success(${entity?uncap_first}, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
@@ -68,8 +84,13 @@ public class ${table.controllerName} {
     */
     @PostMapping("")
     public JsonResponse create(${entity}  ${entity?uncap_first}) throws Exception {
-        ${entity?uncap_first}Service.save(${entity?uncap_first});
-        return JsonResponse.success(null);
+        if(${entity?uncap_first}Service.save(${entity?uncap_first})){
+            return JsonResponse.success(${entity?uncap_first}, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 

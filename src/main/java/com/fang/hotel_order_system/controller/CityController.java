@@ -10,60 +10,87 @@ import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.service.CityService;
 import com.fang.hotel_order_system.entity.City;
 
+import java.util.List;
+
 
 /**
- * 前端控制器
+ *
+ *  前端控制器
+ *
  *
  * @author fang
+ * @since 2021-06-17
  * @version v1.0
- * @since 2021-06-14
  */
 @RestController
 @RequestMapping("/api/city")
 public class CityController {
 
-    private final Logger logger = LoggerFactory.getLogger(CityController.class);
+    private final Logger logger = LoggerFactory.getLogger( CityController.class );
 
     @Autowired
     private CityService cityService;
 
     /**
-     * 描述：根据Id 查询
-     */
+    * 描述：查询整个列表
+    *
+    */
+    @GetMapping("")
+    public JsonResponse getList()throws Exception {
+        List<City> cityList =  cityService.list();
+        return JsonResponse.success(cityList);
+    }
+    /**
+    * 描述：根据Id 查询
+    *
+    */
     @GetMapping("/{id}")
-    public JsonResponse getById(@PathVariable("id") Long id) throws Exception {
-        City city = cityService.getById(id);
+    public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
+        City city =  cityService.getById(id);
         return JsonResponse.success(city);
     }
 
     /**
-     * 描述：根据Id删除
-     */
+    * 描述：根据Id删除
+    *
+    */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        cityService.removeById(id);
-        return JsonResponse.success(null);
+        if(cityService.removeById(id)){
+            return JsonResponse.successMessage("删除成功！");
+        }else{
+            return JsonResponse.failure("删除失败！");
+        }
     }
 
 
     /**
-     * 描述：根据Id 更新
-     */
-    @PutMapping("/{id}")
-    public JsonResponse updateCity(@PathVariable("id") Long id, City city) throws Exception {
-        city.setCityId(id);
-        cityService.updateById(city);
-        return JsonResponse.success(null);
+    * 描述：根据Id 更新
+    *
+    */
+    @PutMapping("")
+    public JsonResponse updateByIdCity(City  city) throws Exception {
+        if(cityService.updateById(city)){
+            return JsonResponse.success(city, "修改成功！");
+        }else{
+            return JsonResponse.failure("修改失败！");
+        }
     }
 
 
     /**
-     * 描述:创建City
-     */
+    * 描述:创建City
+    *
+    */
     @PostMapping("")
-    public JsonResponse create(City city) throws Exception {
-        cityService.save(city);
-        return JsonResponse.success(null);
+    public JsonResponse create(City  city) throws Exception {
+        if(cityService.save(city)){
+            return JsonResponse.success(city, "添加成功！");
+        }else{
+            return JsonResponse.failure("添加失败！");
+        }
+
+
     }
 }
 
