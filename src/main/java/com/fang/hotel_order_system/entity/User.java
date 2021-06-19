@@ -47,6 +47,9 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "邮箱地址")
     private String email;
 
+    @ApiModelProperty(value = "邮箱地址")
+    private String icon;
+
     @ApiModelProperty(value = "逻辑删除")
     @TableLogic
     private Boolean isDeleted;

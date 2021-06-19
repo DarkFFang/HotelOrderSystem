@@ -1,5 +1,6 @@
 package com.fang.hotel_order_system.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
@@ -19,14 +20,14 @@ import java.util.List;
  *
  *
  * @author fang
- * @since 2021-06-17
+ * @since 2021-06-18
  * @version v1.0
  */
 @RestController
 @RequestMapping("/api/permission")
 public class PermissionController {
 
-    private final Logger logger = LoggerFactory.getLogger( PermissionController.class );
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     @Autowired
     private PermissionService permissionService;
@@ -40,6 +41,18 @@ public class PermissionController {
         List<Permission> permissionList =  permissionService.list();
         return JsonResponse.success(permissionList);
     }
+
+    /**
+    * 描述：查询整个列表,并分页
+    *
+    */
+    @GetMapping("/page/{current}/{size}")
+    public JsonResponse getListPage(@PathVariable long current,@PathVariable long size)throws Exception {
+        Page<Permission> page=new Page<>(current,size);
+        permissionService.page(page);
+        return JsonResponse.success(page);
+    }
+
     /**
     * 描述：根据Id 查询
     *
@@ -69,7 +82,7 @@ public class PermissionController {
     *
     */
     @PutMapping("")
-    public JsonResponse updateByIdPermission(Permission  permission) throws Exception {
+    public JsonResponse updateByPermissionId(Permission  permission) throws Exception {
         if(permissionService.updateById(permission)){
             return JsonResponse.success(permission, "修改成功！");
         }else{

@@ -1,8 +1,15 @@
 package com.fang.hotel_order_system;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.Permission;
+import com.fang.hotel_order_system.entity.Status;
+import com.fang.hotel_order_system.entity.User;
 import com.fang.hotel_order_system.mapper.UserMapper;
+import com.fang.hotel_order_system.service.MailService;
 import com.fang.hotel_order_system.service.PermissionService;
+import com.fang.hotel_order_system.service.StatusService;
+import com.fang.hotel_order_system.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,14 +23,29 @@ class HotelOrderSystemApplicationTests {
 
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private StatusService statusService;
+    @Autowired
+    private MailService mailService;
 
     @Test
     void contextLoads() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("123456"));
-        System.out.println(permissionService.toString());
-        List<Permission> permissionList = permissionService.listByUserId(1L);
-        System.out.println(permissionList.toString());
+        int count = userService.count(new QueryWrapper<User>().eq("phone", "1"));
+        System.out.println(count);
+    }
+
+    @Test
+    void pageTest() {
+        Page<Status> page = new Page<>(2, 5);
+        statusService.page(page);
+        page.getRecords().forEach(System.out::println);
+    }
+
+    @Test
+    void verifyCodeTest() {
+        mailService.sendVerifyCode("a123123sd@qq.com","123456");
     }
 
 }

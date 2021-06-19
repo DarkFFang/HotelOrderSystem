@@ -83,6 +83,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*/api-docs").permitAll()
                 .antMatchers("/druid/**").permitAll()
                 .antMatchers("/static/**").permitAll()
+                .antMatchers("/api/user/register").permitAll()
+                .antMatchers("/api/user/sendVerifyCode").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();

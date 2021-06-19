@@ -19,10 +19,22 @@ spring:
     port: 6379
     password: 555913
     timeout: 30000
+  mail:
+    username: 948314053@qq.com
+    password: tspouadpldnfbbah
+    default-encoding: UTF-8
+    host: smtp.qq.com
+
+
 
 mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
 
+logging:
+  level:
+    com.fang.hotel_order_system: debug
+  file:
+    name: logs/log.log
 

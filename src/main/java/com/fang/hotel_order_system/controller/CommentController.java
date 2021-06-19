@@ -1,5 +1,6 @@
 package com.fang.hotel_order_system.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
@@ -19,14 +20,14 @@ import java.util.List;
  *
  *
  * @author fang
- * @since 2021-06-17
+ * @since 2021-06-18
  * @version v1.0
  */
 @RestController
 @RequestMapping("/api/comment")
 public class CommentController {
 
-    private final Logger logger = LoggerFactory.getLogger( CommentController.class );
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     @Autowired
     private CommentService commentService;
@@ -40,6 +41,18 @@ public class CommentController {
         List<Comment> commentList =  commentService.list();
         return JsonResponse.success(commentList);
     }
+
+    /**
+    * 描述：查询整个列表,并分页
+    *
+    */
+    @GetMapping("/page/{current}/{size}")
+    public JsonResponse getListPage(@PathVariable long current,@PathVariable long size)throws Exception {
+        Page<Comment> page=new Page<>(current,size);
+        commentService.page(page);
+        return JsonResponse.success(page);
+    }
+
     /**
     * 描述：根据Id 查询
     *
@@ -69,7 +82,7 @@ public class CommentController {
     *
     */
     @PutMapping("")
-    public JsonResponse updateByIdComment(Comment  comment) throws Exception {
+    public JsonResponse updateByCommentId(Comment  comment) throws Exception {
         if(commentService.updateById(comment)){
             return JsonResponse.success(comment, "修改成功！");
         }else{
