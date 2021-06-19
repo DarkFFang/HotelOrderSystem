@@ -6,6 +6,8 @@ import com.fang.hotel_order_system.service.RoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -17,4 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
+    @Override
+    public List<Role> ListByUserId(Long userId) {
+        return baseMapper.selectListByUserId(userId);
+    }
 }

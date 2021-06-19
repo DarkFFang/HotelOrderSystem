@@ -2,10 +2,15 @@ package com.fang.hotel_order_system.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fang.hotel_order_system.entity.JwtUser;
+import com.fang.hotel_order_system.entity.Role;
 import com.fang.hotel_order_system.entity.dto.RegisterDto;
+import com.fang.hotel_order_system.entity.vo.UserVo;
 import com.fang.hotel_order_system.service.MailService;
+import com.fang.hotel_order_system.service.RoleService;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
@@ -37,9 +42,23 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
+    private RoleService roleService;
+    @Autowired
     private MailService mailService;
     @Autowired
     private RedisTemplate redisTemplate;
+
+    /**
+     * 获取当前用户信息
+     */
+    @GetMapping("/info")
+    public JsonResponse getCurrentUserInfo() throws Exception {
+        JwtUser jwtUser = (JwtUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = userService.getById(jwtUser.getUser().getUserId());
+        List<Role> roleList = roleService.ListByUserId(user.getUserId());
+        UserVo userVo=new UserVo(user,roleList);
+        return JsonResponse.success(userVo);
+    }
 
     /**
      * 描述：查询整个列表

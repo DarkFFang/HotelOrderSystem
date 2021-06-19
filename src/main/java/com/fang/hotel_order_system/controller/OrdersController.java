@@ -15,91 +15,102 @@ import java.util.List;
 
 
 /**
- *
- *  前端控制器
- *
+ * 前端控制器
  *
  * @author fang
- * @since 2021-06-18
  * @version v1.0
+ * @since 2021-06-18
  */
 @RestController
 @RequestMapping("/api/orders")
 public class OrdersController {
 
-    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private OrdersService ordersService;
 
     /**
-    * 描述：查询整个列表
-    *
-    */
+     * 描述：查询整个列表
+     */
     @GetMapping("")
-    public JsonResponse getList()throws Exception {
-        List<Orders> ordersList =  ordersService.list();
+    public JsonResponse getList() throws Exception {
+        List<Orders> ordersList = ordersService.list();
         return JsonResponse.success(ordersList);
     }
 
     /**
-    * 描述：查询整个列表,并分页
-    *
-    */
+     * 描述：查询整个列表,并分页
+     */
     @GetMapping("/page/{current}/{size}")
-    public JsonResponse getListPage(@PathVariable long current,@PathVariable long size)throws Exception {
-        Page<Orders> page=new Page<>(current,size);
+    public JsonResponse getListPage(@PathVariable long current, @PathVariable long size) throws Exception {
+        Page<Orders> page = new Page<>(current, size);
         ordersService.page(page);
         return JsonResponse.success(page);
     }
 
     /**
-    * 描述：根据Id 查询
-    *
-    */
+     * 描述：查询整个列表
+     */
+    @GetMapping("/userId/{userId}")
+    public JsonResponse getListByUserId(@PathVariable Long userId) throws Exception {
+        List<Orders> ordersList = ordersService.listByUserId(userId);
+        return JsonResponse.success(ordersList);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/userId/{userId}/page/{current}/{size}")
+    public JsonResponse getListPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<Orders> page = new Page<>(current, size);
+        ordersService.pageByUserId(page, userId);
+        return JsonResponse.success(page);
+    }
+
+    /**
+     * 描述：根据Id 查询
+     */
     @GetMapping("/{id}")
-    public JsonResponse getById(@PathVariable("id") Long id)throws Exception {
-        Orders orders =  ordersService.getById(id);
+    public JsonResponse getById(@PathVariable("id") Long id) throws Exception {
+        Orders orders = ordersService.getById(id);
         return JsonResponse.success(orders);
     }
 
     /**
-    * 描述：根据Id删除
-    *
-    */
+     * 描述：根据Id删除
+     */
     @DeleteMapping("/{id}")
     public JsonResponse deleteById(@PathVariable("id") Long id) throws Exception {
-        if(ordersService.removeById(id)){
+        if (ordersService.removeById(id)) {
             return JsonResponse.successMessage("删除成功！");
-        }else{
+        } else {
             return JsonResponse.failure("删除失败！");
         }
     }
 
 
     /**
-    * 描述：根据Id 更新
-    *
-    */
+     * 描述：根据Id 更新
+     */
     @PutMapping("")
-    public JsonResponse updateByOrdersId(Orders  orders) throws Exception {
-        if(ordersService.updateById(orders)){
+    public JsonResponse updateByOrdersId(Orders orders) throws Exception {
+        if (ordersService.updateById(orders)) {
             return JsonResponse.success(orders, "修改成功！");
-        }else{
+        } else {
             return JsonResponse.failure("修改失败！");
         }
     }
 
 
     /**
-    * 描述:创建Orders
-    *
-    */
+     * 描述:创建Orders
+     */
     @PostMapping("")
-    public JsonResponse create(Orders  orders) throws Exception {
-        if(ordersService.save(orders)){
+    public JsonResponse create(Orders orders) throws Exception {
+        if (ordersService.save(orders)) {
             return JsonResponse.success(orders, "添加成功！");
-        }else{
+        } else {
             return JsonResponse.failure("添加失败！");
         }
 

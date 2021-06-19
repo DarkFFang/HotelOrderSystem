@@ -8,5 +8,10 @@
         <result column="role_name" property="roleName" />
         <result column="description" property="description" />
     </resultMap>
-
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM role r
+        LEFT JOIN user_role ur ON r.role_id=ur.role_id
+        WHERE ur.user_id=#{userId}
+    </select>
 </mapper>

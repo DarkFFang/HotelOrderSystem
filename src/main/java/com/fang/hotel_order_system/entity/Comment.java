@@ -1,10 +1,13 @@
 package com.fang.hotel_order_system.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -51,6 +54,10 @@ public class Comment extends Model<Comment> {
     @ApiModelProperty(value = "逻辑删除")
     @TableLogic
     private Boolean isDeleted;
+
+    @ApiModelProperty(value = "发布时间")
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
 
 
     @Override

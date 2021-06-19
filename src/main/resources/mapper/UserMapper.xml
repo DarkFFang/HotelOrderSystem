@@ -7,9 +7,28 @@
         <id column="user_id" property="userId" />
         <result column="username" property="username" />
         <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
         <result column="phone" property="phone" />
         <result column="email" property="email" />
+        <result column="icon" property="icon" />
         <result column="is_deleted" property="isDeleted" />
+        <result column="create_time" property="createTime" />
     </resultMap>
 
+
+    <resultMap id="BaseResultMap" type="com.fang.hotel_order_system.entity.vo.UserVo">
+        <id column="user_id" property="userId" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="phone" property="phone" />
+        <result column="email" property="email" />
+        <result column="icon" property="icon" />
+        <result column="create_time" property="createTime" />
+        <collection property="roleList" javaType="com.fang.hotel_order_system.entity.Role">
+            <id column="role_id" property="roleId" />
+            <result column="role_name" property="roleName" />
+            <result column="description" property="description" />
+        </collection>
+    </resultMap>
 </mapper>

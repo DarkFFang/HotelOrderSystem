@@ -12,7 +12,18 @@
         <result column="out_time" property="outTime" />
         <result column="price" property="price" />
         <result column="status" property="status" />
-        <result column="order_time" property="orderTime" />
+        <result column="create_time" property="createTime" />
     </resultMap>
-
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT o.*
+        FROM user u
+        LEFT JOIN orders o ON u.user_id=o.user_id
+        WHERE u.user_id=#{userId}
+    </select>
+    <select id="selectPageByUserId" resultMap="BaseResultMap">
+        SELECT o.*
+        FROM user u
+        LEFT JOIN orders o ON u.user_id=o.user_id
+        WHERE u.user_id=#{userId}
+    </select>
 </mapper>
