@@ -6,7 +6,10 @@ import com.fang.hotel_order_system.service.PermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -21,7 +24,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<Permission> listByUserId(Long userId) {
-        return baseMapper.selectListByUserId(userId);
+        List<Permission> permissionList = baseMapper.selectListByUserId(userId);
+        Set<Permission> permissionSet = new LinkedHashSet<>(permissionList);
+        permissionList.clear();
+        permissionList.addAll(permissionSet);
+        return permissionList;
     }
 
     @Override

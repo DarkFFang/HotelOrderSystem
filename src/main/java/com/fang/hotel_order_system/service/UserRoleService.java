@@ -12,5 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-06-14
  */
 public interface UserRoleService extends IService<UserRole> {
+    boolean updateByUserId(Long userId, Long[] roleIdList);
 
 }

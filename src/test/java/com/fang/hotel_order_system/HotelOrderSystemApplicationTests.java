@@ -2,16 +2,10 @@ package com.fang.hotel_order_system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fang.hotel_order_system.entity.Bed;
-import com.fang.hotel_order_system.entity.Permission;
-import com.fang.hotel_order_system.entity.Status;
-import com.fang.hotel_order_system.entity.User;
+import com.fang.hotel_order_system.entity.*;
 import com.fang.hotel_order_system.mapper.BedMapper;
 import com.fang.hotel_order_system.mapper.UserMapper;
-import com.fang.hotel_order_system.service.MailService;
-import com.fang.hotel_order_system.service.PermissionService;
-import com.fang.hotel_order_system.service.StatusService;
-import com.fang.hotel_order_system.service.UserService;
+import com.fang.hotel_order_system.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +25,8 @@ class HotelOrderSystemApplicationTests {
     private StatusService statusService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private HotelService hotelService;
 
     @Autowired
     private BedMapper bedMapper;
@@ -43,6 +39,8 @@ class HotelOrderSystemApplicationTests {
         Bed bed = new Bed();
         bed.setBedType("测试床");
         System.out.println(bedMapper.insert(bed));
+
+        permissionService.listByUserId(1L).forEach(System.out::println);
     }
 
     @Test
@@ -54,7 +52,20 @@ class HotelOrderSystemApplicationTests {
 
     @Test
     void verifyCodeTest() {
-        mailService.sendVerifyCode("a123123sd@qq.com","123456");
+        mailService.sendVerifyCode("a123123sd@qq.com", "123456");
     }
 
+    @Test
+    void keywordList() {
+        Page<Hotel> page = new Page<>(1, 5);
+        String keyword = "成都";
+        hotelService.page(page, new QueryWrapper<Hotel>().like("hotel_name", keyword)
+                .or().like("address", keyword)
+                .or().like("brand", keyword));
+        System.out.println(page.getRecords());
+
+        System.out.println(hotelService.list(new QueryWrapper<Hotel>().like("hotel_name", keyword)
+                .or().like("address", keyword)
+                .or().like("brand", keyword)));
+    }
 }

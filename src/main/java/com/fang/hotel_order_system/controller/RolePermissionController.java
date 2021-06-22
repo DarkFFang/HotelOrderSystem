@@ -78,7 +78,7 @@ public class RolePermissionController {
     @PutMapping("/updateByRoleId")
     public JsonResponse updateByRoleId(Long roleId,Long[] permissionIdList) throws Exception {
         if (rolePermissionService.updateByRoleId(roleId,permissionIdList)) {
-            return JsonResponse.success("修改成功！");
+            return JsonResponse.successMessage("修改成功！");
         } else {
             return JsonResponse.failure("修改失败！");
         }
