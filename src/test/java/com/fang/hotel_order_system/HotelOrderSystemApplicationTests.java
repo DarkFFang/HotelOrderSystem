@@ -2,9 +2,11 @@ package com.fang.hotel_order_system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fang.hotel_order_system.entity.Bed;
 import com.fang.hotel_order_system.entity.Permission;
 import com.fang.hotel_order_system.entity.Status;
 import com.fang.hotel_order_system.entity.User;
+import com.fang.hotel_order_system.mapper.BedMapper;
 import com.fang.hotel_order_system.mapper.UserMapper;
 import com.fang.hotel_order_system.service.MailService;
 import com.fang.hotel_order_system.service.PermissionService;
@@ -30,10 +32,17 @@ class HotelOrderSystemApplicationTests {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private BedMapper bedMapper;
+
     @Test
     void contextLoads() {
-        int count = userService.count(new QueryWrapper<User>().eq("phone", "1"));
-        System.out.println(count);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        System.out.println(encoder.encode("123456"));
+        Bed bed = new Bed();
+        bed.setBedType("测试床");
+        System.out.println(bedMapper.insert(bed));
     }
 
     @Test

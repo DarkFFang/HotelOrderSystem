@@ -20,4 +20,12 @@
         WHERE u.user_id=#{userId}
     </select>
 
+    <select id="selectListByRoleId" resultMap="BaseResultMap">
+        SELECT p.*
+        FROM role r
+        LEFT JOIN role_permission rp ON rp.role_id=r.role_id
+        LEFT JOIN permission p ON p.permission_id =rp.permission_id
+        WHERE r.role_id=#{roleId}
+    </select>
+
 </mapper>

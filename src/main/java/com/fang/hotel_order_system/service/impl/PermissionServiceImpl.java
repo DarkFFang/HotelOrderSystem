@@ -23,4 +23,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     public List<Permission> listByUserId(Long userId) {
         return baseMapper.selectListByUserId(userId);
     }
+
+    @Override
+    public List<Permission> listByRoleId(Long roleId) {
+        return baseMapper.selectListByRoleId(roleId);
+    }
 }

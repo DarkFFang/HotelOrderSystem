@@ -1,6 +1,7 @@
 package com.fang.hotel_order_system.filter;
 
 
+import com.fang.hotel_order_system.entity.JwtUser;
 import com.fang.hotel_order_system.entity.Permission;
 import com.fang.hotel_order_system.service.PermissionService;
 import com.fang.hotel_order_system.service.UserService;
@@ -28,12 +29,12 @@ import java.util.List;
 
 public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
     @Autowired
-    private PermissionService permissionService;
+    private UserService userService;
 
 
-    public JwtAuthenticationTokenFilter(AuthenticationManager authenticationManager, PermissionService permissionService) {
+    public JwtAuthenticationTokenFilter(AuthenticationManager authenticationManager, UserService userService) {
         super(authenticationManager);
-        this.permissionService = permissionService;
+        this.userService = userService;
     }
 
 
@@ -52,16 +53,10 @@ public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
                     redisUtil.expire("user:" + id.toString(), 60 * 60 * 3);
                 }
 */
-                Long userId = JwtTokenUtil.getUserIdFromToken(authHeader);
+                UserDetails userDetails = userService.loadUserByUsername(username);
 
-                List<Permission> permissionList = permissionService.listByUserId(userId);
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                for (Permission permission : permissionList) {
-                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(permission.getValue());
-                    authorities.add(authority);
-                }
                 if (JwtTokenUtil.validateToken(authHeader, username)) {
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             }

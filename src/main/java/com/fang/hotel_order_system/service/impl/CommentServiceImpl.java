@@ -1,10 +1,14 @@
 package com.fang.hotel_order_system.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.Comment;
 import com.fang.hotel_order_system.mapper.CommentMapper;
 import com.fang.hotel_order_system.service.CommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +21,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
+    @Override
+    public List<Comment> listByUserId(Long userId) {
+        return baseMapper.selectListByUserId(userId);
+    }
+
+    @Override
+    public IPage<Comment> pageByUserId(Page<Comment> page, Long userId) {
+        return baseMapper.selectPageByUserId(page,userId);
+    }
 }

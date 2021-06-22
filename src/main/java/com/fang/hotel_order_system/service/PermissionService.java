@@ -16,5 +16,6 @@ import java.util.List;
 public interface PermissionService extends IService<Permission> {
 
     List<Permission> listByUserId(Long userId);
+    List<Permission> listByRoleId(Long roleId);
 
 }

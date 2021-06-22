@@ -12,5 +12,16 @@
         <result column="is_deleted" property="isDeleted" />
         <result column="create_time" property="createTime" />
     </resultMap>
-
+    <select id="selectListByUserId" resultMap="BaseResultMap">
+        SELECT c.*
+        FROM user u
+        LEFT JOIN comment c ON u.user_id=c.user_id
+        WHERE u.user_id=#{userId}
+    </select>
+    <select id="selectPageByUserId" resultMap="BaseResultMap">
+        SELECT c.*
+        FROM user u
+        LEFT JOIN comment c ON u.user_id=c.user_id
+        WHERE u.user_id=#{userId}
+    </select>
 </mapper>

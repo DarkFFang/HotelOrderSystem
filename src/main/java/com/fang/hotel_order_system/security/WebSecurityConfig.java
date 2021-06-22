@@ -3,6 +3,7 @@ package com.fang.hotel_order_system.security;
 import com.fang.hotel_order_system.filter.JwtAuthenticationTokenFilter;
 import com.fang.hotel_order_system.filter.JwtUsernamePasswordAuthenticationFilter;
 import com.fang.hotel_order_system.service.PermissionService;
+import com.fang.hotel_order_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -39,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private PermissionService permissionService;
+    private UserService userService;
 
     /**
      * 密码编码器
@@ -90,7 +91,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable();
 
         http.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthenticationTokenFilter(authenticationManager(),permissionService));
+                .addFilter(new JwtAuthenticationTokenFilter(authenticationManager(),userService));
 
 
         http.logout()

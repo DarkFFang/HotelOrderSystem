@@ -56,7 +56,16 @@ public class UserController {
         JwtUser jwtUser = (JwtUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         User user = userService.getById(jwtUser.getUser().getUserId());
         List<Role> roleList = roleService.ListByUserId(user.getUserId());
-        UserVo userVo=new UserVo(user,roleList);
+
+        UserVo userVo=new UserVo();
+        userVo.setUserId(user.getUserId());
+        userVo.setUsername(user.getUsername());
+        userVo.setPhone(user.getPhone());
+        userVo.setEmail(user.getEmail());
+        userVo.setNickname(user.getNickname());
+        userVo.setCreateTime(user.getCreateTime());
+        userVo.setIcon(user.getIcon());
+        userVo.setRoleList(roleList);
         return JsonResponse.success(userVo);
     }
 
@@ -65,8 +74,8 @@ public class UserController {
      */
     @GetMapping("")
     public JsonResponse getList() throws Exception {
-        List<User> userList = userService.list();
-        return JsonResponse.success(userList);
+        List<UserVo> userVoList = userService.listUserVo();
+        return JsonResponse.success(userVoList);
     }
 
     /**
@@ -74,8 +83,8 @@ public class UserController {
      */
     @GetMapping("/page/{current}/{size}")
     public JsonResponse getListPage(@PathVariable long current, @PathVariable long size) throws Exception {
-        Page<User> page = new Page<>(current, size);
-        userService.page(page);
+        Page<UserVo> page = new Page<>(current, size);
+        userService.pageUserVo(page);
         return JsonResponse.success(page);
     }
 

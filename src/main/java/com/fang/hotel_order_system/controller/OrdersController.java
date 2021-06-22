@@ -50,7 +50,7 @@ public class OrdersController {
     }
 
     /**
-     * 描述：查询整个列表
+     * 描述：查询相关用户的整个列表
      */
     @GetMapping("/userId/{userId}")
     public JsonResponse getListByUserId(@PathVariable Long userId) throws Exception {
@@ -59,7 +59,7 @@ public class OrdersController {
     }
 
     /**
-     * 描述：查询整个列表,并分页
+     * 描述：查询相关用户的列表,并分页
      */
     @GetMapping("/userId/{userId}/page/{current}/{size}")
     public JsonResponse getListPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
@@ -99,6 +99,23 @@ public class OrdersController {
             return JsonResponse.success(orders, "修改成功！");
         } else {
             return JsonResponse.failure("修改失败！");
+        }
+    }
+
+    /**
+     * 描述：根据Id 更新
+     */
+    @PutMapping("cancel/{ordersId}")
+    public JsonResponse cancelOrdersByOrdersId(@PathVariable Long ordersId) throws Exception {
+        Orders orders = ordersService.getById(ordersId);
+        if (orders.getStatusId() != 1) {
+            return JsonResponse.failure("该订单不可取消！");
+        }
+        orders.setStatusId(4);
+        if (ordersService.updateById(orders)) {
+            return JsonResponse.success(orders, "取消成功！");
+        } else {
+            return JsonResponse.failure("取消失败！");
         }
     }
 

@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface RolePermissionService extends IService<RolePermission> {
 
+    boolean updateByRoleId(Long roleId, Long[] permissionIdList);
 }

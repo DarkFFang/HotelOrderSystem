@@ -13,8 +13,8 @@
         <result column="latitude" property="latitude" />
         <result column="description" property="description" />
         <result column="brand" property="brand" />
-        <result column="pic_1" property="pic1" />
-        <result column="pic_2" property="pic2" />
+        <result column="pic1" property="pic1" />
+        <result column="pic2" property="pic2" />
         <result column="is_deleted" property="isDeleted" />
     </resultMap>
 
