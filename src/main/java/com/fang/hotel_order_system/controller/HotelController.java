@@ -2,6 +2,7 @@ package com.fang.hotel_order_system.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
@@ -58,7 +59,18 @@ public class HotelController {
         Page<Hotel> page = new Page<>(current, size);
         hotelService.page(page, new QueryWrapper<Hotel>().like("hotel_name", keyword)
                 .or().like("address", keyword)
-                .or().like("brand", keyword));
+                .or().like("brand", keyword)
+                .or().like("description", keyword));
+        return JsonResponse.success(page);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/starRank/{starRank}/page/{current}/{size}")
+    public JsonResponse getListPageByStatRank(@PathVariable Integer starRank, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<Hotel> page = new Page<>(current, size);
+        hotelService.page(page, new QueryWrapper<Hotel>().eq("star_rank", starRank));
         return JsonResponse.success(page);
     }
 
