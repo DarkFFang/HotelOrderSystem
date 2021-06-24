@@ -6,6 +6,7 @@ import com.fang.hotel_order_system.mapper.BedMapper;
 import com.fang.hotel_order_system.mapper.BreakfastMapper;
 import com.fang.hotel_order_system.service.BedService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fang.hotel_order_system.service.BreakfastService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,7 +21,7 @@ import java.util.List;
  * @since 2021-06-14
  */
 @Service
-public abstract class BedServiceImpl extends ServiceImpl<BedMapper, Bed> implements BedService {
+public class BedServiceImpl extends ServiceImpl<BedMapper, Bed> implements BedService {
     @Resource
     private BedMapper mapper;
 
@@ -47,8 +48,23 @@ public abstract class BedServiceImpl extends ServiceImpl<BedMapper, Bed> impleme
     }
 
     @Override
+    public List<Breakfast> selectRoles(Breakfast record) {
+        return null;
+    }
+
+    @Override
     public List<Breakfast> selectRoles(Bed record) {
         return mapper.queryList(record);
+    }
+
+    @Override
+    public int updateByPrimaryKeySelective(Breakfast record) {
+        return 0;
+    }
+
+    @Override
+    public int updateByPrimaryKey(Breakfast record) {
+        return 0;
     }
 
     @Override
