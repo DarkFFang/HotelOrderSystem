@@ -72,8 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors()
-                .and()
+        http
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -91,7 +90,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable();
 
         http.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthenticationTokenFilter(authenticationManager(),userService));
+                .addFilter(new JwtAuthenticationTokenFilter(authenticationManager(), userService));
 
 
         http.logout()
