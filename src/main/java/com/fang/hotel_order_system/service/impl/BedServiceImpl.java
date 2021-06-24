@@ -79,15 +79,15 @@ public abstract class BedServiceImpl extends ServiceImpl<BedMapper, Bed> impleme
     }
 
     /**
-     * 删除角色和角色相关信息
+     * 删除床型相关信息
      */
     public void deleteBedInfo (Integer bedId){
-// 删除用户和角色中间表信息
+
         mapper.deleteUserBed(bedId);
-// 删除角色和菜单中间表信息
+
         mapper.deleteBedMenu(bedId);
 
-// 删除角色信息
+
         mapper.deleteByPrimaryKey(bedId);
     }
 }
