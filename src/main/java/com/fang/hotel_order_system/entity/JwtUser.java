@@ -30,8 +30,10 @@ public class JwtUser implements UserDetails {
      * 权限
      */
     private Collection<? extends GrantedAuthority> authorities;
+
     /**
-     *返回用户权限
+     * 返回用户权限
+     *
      * @return
      */
     @Override
@@ -50,7 +52,8 @@ public class JwtUser implements UserDetails {
     }
 
     /**
-     *返回账号是否过期
+     * 返回账号是否过期
+     *
      * @return
      */
     @Override
@@ -61,6 +64,7 @@ public class JwtUser implements UserDetails {
 
     /**
      * 返回账号是否锁定
+     *
      * @return
      */
     @Override
@@ -70,7 +74,8 @@ public class JwtUser implements UserDetails {
     }
 
     /**
-     *返回用户凭证是否过期
+     * 返回用户凭证是否过期
+     *
      * @return
      */
     @Override
@@ -81,6 +86,7 @@ public class JwtUser implements UserDetails {
 
     /**
      * 返回是否可用
+     *
      * @return
      */
     @Override

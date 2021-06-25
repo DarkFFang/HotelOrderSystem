@@ -56,7 +56,7 @@ public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
                 UserDetails userDetails = userService.loadUserByUsername(username);
 
                 if (JwtTokenUtil.validateToken(authHeader, username)) {
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             }

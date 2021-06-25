@@ -1,27 +1,31 @@
 package com.fang.hotel_order_system.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.JwtUser;
 import com.fang.hotel_order_system.entity.Role;
+import com.fang.hotel_order_system.entity.User;
+import com.fang.hotel_order_system.entity.dto.LoginDto;
 import com.fang.hotel_order_system.entity.dto.RegisterDto;
 import com.fang.hotel_order_system.entity.vo.UserVo;
 import com.fang.hotel_order_system.service.MailService;
 import com.fang.hotel_order_system.service.RoleService;
+import com.fang.hotel_order_system.service.UserService;
+import com.fang.hotel_order_system.util.JsonResponse;
+import com.fang.hotel_order_system.util.JwtTokenUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomUtils;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import com.fang.hotel_order_system.util.JsonResponse;
-import com.fang.hotel_order_system.service.UserService;
-import com.fang.hotel_order_system.entity.User;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -54,10 +58,10 @@ public class UserController {
     @GetMapping("/info")
     public JsonResponse getCurrentUserInfo() throws Exception {
         JwtUser jwtUser = (JwtUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        User user = userService.getById(jwtUser.getUser().getUserId());
+        User user = jwtUser.getUser();
         List<Role> roleList = roleService.ListByUserId(user.getUserId());
 
-        UserVo userVo=new UserVo();
+        UserVo userVo = new UserVo();
         userVo.setUserId(user.getUserId());
         userVo.setUsername(user.getUsername());
         userVo.setPhone(user.getPhone());
@@ -65,6 +69,7 @@ public class UserController {
         userVo.setNickname(user.getNickname());
         userVo.setCreateTime(user.getCreateTime());
         userVo.setIcon(user.getIcon());
+        userVo.setIsDeleted(user.getIsDeleted());
         userVo.setRoleList(roleList);
         return JsonResponse.success(userVo);
     }
@@ -140,10 +145,60 @@ public class UserController {
     }
 
     /**
+     * 描述:创建User
+     */
+    @PostMapping("/login")
+    public JsonResponse login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        User loginUser = new ObjectMapper().readValue(request.getInputStream(), User.class);
+        User user = userService.getOne(new QueryWrapper<User>()
+                .eq("username", loginUser.getUsername())
+                .or()
+                .eq("email", loginUser.getEmail())
+                .or()
+                .eq("phone", loginUser.getPhone()));
+        if (user == null) {
+            return JsonResponse.failure("此用户不存在，请注册！");
+        }
+        System.out.println("LoginUser:" + loginUser.toString());
+        System.out.println("User:" + user.toString());
+        if (!encoder.matches(loginUser.getPassword(), user.getPassword())) {
+            return JsonResponse.failure("用户名或邮箱或手机号或密码错误，登录失败！");
+        }
+        JwtUser jwtUser = (JwtUser) userService.loadUserByUsername(user.getUsername());
+        String token = JwtTokenUtil.createToken(jwtUser);
+        response.setContentType("application/json; charset=utf-8");
+        response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
+        return JsonResponse.success(jwtUser.getUser(), "登录成功！");
+    }
+
+    /**
+     * 描述:创建User
+     */
+    @PostMapping("/loginByVerifyCode")
+    public JsonResponse login(@RequestBody LoginDto loginDto, HttpServletResponse response) throws Exception {
+        User user = userService.getOne(new QueryWrapper<User>().eq("email", loginDto.getEmail()));
+        if (user == null) {
+            return JsonResponse.failure("此用户不存在，请注册！");
+        }
+        String loginVerifyCode = (String) redisTemplate.opsForValue().get(loginDto.getEmail() + ".loginVerifyCode");
+        if (loginVerifyCode == null) {
+            return JsonResponse.failure("验证码失效，请重试！");
+        } else if (!loginVerifyCode.equals(loginDto.getVerifyCode())) {
+            return JsonResponse.failure("验证码错误！");
+        }
+        JwtUser jwtUser = (JwtUser) userService.loadUserByUsername(user.getUsername());
+        String token = JwtTokenUtil.createToken(jwtUser);
+        response.setContentType("application/json; charset=utf-8");
+        response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
+        return JsonResponse.success(jwtUser.getUser(), "登录成功！");
+    }
+
+    /**
      * 描述:注册
      */
     @PostMapping("/register")
-    public JsonResponse register(RegisterDto registerDto) throws Exception {
+    public JsonResponse register(@RequestBody RegisterDto registerDto) throws Exception {
         int count;
 
         // 验证用户名是否注册
@@ -165,10 +220,10 @@ public class UserController {
         }
 
         //验证验证码是否正确
-        String verifyCode = (String) redisTemplate.opsForValue().get(registerDto.getEmail() + ".verifyCode");
-        if (verifyCode == null) {
+        String registerVerifyCode = (String) redisTemplate.opsForValue().get(registerDto.getEmail() + ".registerVerifyCode");
+        if (registerVerifyCode == null) {
             return JsonResponse.failure("验证码失效，请重试！");
-        } else if (!verifyCode.equals(registerDto.getVerifyCode())) {
+        } else if (!registerVerifyCode.equals(registerDto.getVerifyCode())) {
             return JsonResponse.failure("验证码错误！");
         }
 
@@ -185,12 +240,25 @@ public class UserController {
         }
     }
 
-    @GetMapping("/sendVerifyCode")
-    public JsonResponse sendVerifyCode(String email) {
+    @GetMapping("/sendRegisterVerifyCode")
+    public JsonResponse sendRegisterVerifyCode(String email) {
         int verifyNumber = RandomUtils.nextInt(100000, 1000000);
         String verifyCode = String.valueOf(verifyNumber);
-        mailService.sendVerifyCode(email, verifyCode);
-        redisTemplate.opsForValue().set(email + ".verifyCode", verifyCode, 60*5, TimeUnit.SECONDS);
+        mailService.sendVerifyCode(email, "注册", verifyCode);
+        redisTemplate.opsForValue().set(email + ".registerVerifyCode", verifyCode, 60 * 5, TimeUnit.SECONDS);
+        return JsonResponse.successMessage("验证码已发送！");
+    }
+
+    @GetMapping("/sendLoginVerifyCode")
+    public JsonResponse sendLoginVerifyCode(String email) {
+        User user = userService.getOne(new QueryWrapper<User>().eq("email", email));
+        if (user == null) {
+            return JsonResponse.failure("此用户不存在，请注册！");
+        }
+        int verifyNumber = RandomUtils.nextInt(100000, 1000000);
+        String verifyCode = String.valueOf(verifyNumber);
+        mailService.sendVerifyCode(email, "登录", verifyCode);
+        redisTemplate.opsForValue().set(email + ".loginVerifyCode", verifyCode, 60 * 5, TimeUnit.SECONDS);
         return JsonResponse.successMessage("验证码已发送！");
     }
 
