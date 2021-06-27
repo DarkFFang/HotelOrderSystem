@@ -125,7 +125,7 @@ public class HotelController {
     /**
      * 描述：通过选项排序列表，并分页
      */
-    @GetMapping("/hotelVo/option/{option}/sort/{sort}/page/{current}/{size}")
+    @GetMapping("/hotelVo/op /sort/{sort}/page/{current}/{size}")
     public JsonResponse getHotelVoListPageSortedByOption(@PathVariable String option, @PathVariable Boolean sort, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<HotelVo> page = new Page<>(current, size);
         if (true == sort) {

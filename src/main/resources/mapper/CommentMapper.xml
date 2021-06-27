@@ -4,12 +4,45 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.fang.hotel_order_system.entity.Comment">
-        <id column="comment_id" property="commentId" />
-        <result column="hotel_id" property="hotelId" />
-        <result column="user_id" property="userId" />
-        <result column="content" property="content" />
-        <result column="score" property="score" />
-        <result column="is_deleted" property="isDeleted" />
-        <result column="create_time" property="createTime" />
+        <id column="comment_id" property="commentId"/>
+        <result column="hotel_id" property="hotelId"/>
+        <result column="user_id" property="userId"/>
+        <result column="content" property="content"/>
+        <result column="score" property="score"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="CommentVoResultMap" type="com.fang.hotel_order_system.entity.vo.CommentVo">
+        <id column="comment_id" property="commentId"/>
+        <result column="hotel_id" property="hotelId"/>
+        <result column="user_id" property="userId"/>
+        <result column="content" property="content"/>
+        <result column="score" property="score"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="icon" property="icon"/>
+        <result column="nickname" property="nickname"/>
+        <result column="hotel_name" property="hotelName"/>
+    </resultMap>
+
+    <select id="selectCommentVoList" resultMap="CommentVoResultMap">
+        SELECT c.*,u.icon,u.nickname,h.hotel_name
+        FROM comment c
+        LEFT JOIN hotel h ON c.hotel_id=h.hotel_id
+        LEFT JOIN user u ON c.user_id=u.user_id
+    </select>
+    <select id="selectCommentVoPage" resultMap="CommentVoResultMap">
+        SELECT c.*,u.icon,u.nickname,h.hotel_name
+        FROM comment c
+        LEFT JOIN hotel h ON c.hotel_id=h.hotel_id
+        LEFT JOIN user u ON c.user_id=u.user_id
+    </select>
+    <select id="selectCommentVoPageByWrapper" resultMap="CommentVoResultMap">
+        SELECT c.*,u.icon,u.nickname,h.hotel_name
+        FROM comment c
+        LEFT JOIN hotel h ON c.hotel_id=h.hotel_id
+        LEFT JOIN user u ON c.user_id=u.user_id
+        ${ew.customSqlSegment}
+    </select>
 </mapper>

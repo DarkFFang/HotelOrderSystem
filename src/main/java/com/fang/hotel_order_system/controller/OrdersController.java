@@ -147,7 +147,7 @@ public class OrdersController {
     @GetMapping("/ordersVo/hotelId/{hotelId}/page/{current}/{size}")
     public JsonResponse getOrdersVoPageByHotelId(@PathVariable Long hotelId, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<OrdersVo> page = new Page<>(current, size);
-        ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().eq("hotel_id",hotelId));
+        ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().eq("o.hotel_id",hotelId));
         return JsonResponse.success(page);
     }
     /**
