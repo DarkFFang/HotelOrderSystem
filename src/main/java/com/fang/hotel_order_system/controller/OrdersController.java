@@ -1,6 +1,11 @@
 package com.fang.hotel_order_system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fang.hotel_order_system.entity.Room;
+import com.fang.hotel_order_system.entity.vo.OrdersVo;
+import com.fang.hotel_order_system.service.RoomService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.slf4j.Logger;
@@ -30,6 +35,9 @@ public class OrdersController {
     @Autowired
     private OrdersService ordersService;
 
+    @Autowired
+    private RoomService roomService;
+
     /**
      * 描述：查询整个列表
      */
@@ -54,7 +62,7 @@ public class OrdersController {
      */
     @GetMapping("/userId/{userId}")
     public JsonResponse getListByUserId(@PathVariable Long userId) throws Exception {
-        List<Orders> ordersList = ordersService.listByUserId(userId);
+        List<Orders> ordersList = ordersService.list(new QueryWrapper<Orders>().eq("user_id",userId));
         return JsonResponse.success(ordersList);
     }
 
@@ -64,10 +72,84 @@ public class OrdersController {
     @GetMapping("/userId/{userId}/page/{current}/{size}")
     public JsonResponse getListPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<Orders> page = new Page<>(current, size);
-        ordersService.pageByUserId(page, userId);
+        ordersService.page(page, new QueryWrapper<Orders>().eq("user_id",userId));
         return JsonResponse.success(page);
     }
 
+    /**
+     * 描述：查询相关酒店的整个列表
+     */
+    @GetMapping("/hotelId/{hotelId}")
+    public JsonResponse getListByHotelId(@PathVariable Long hotelId) throws Exception {
+        List<Orders> ordersList = ordersService.list(new QueryWrapper<Orders>().eq("hotel_id",hotelId));
+        return JsonResponse.success(ordersList);
+    }
+
+    /**
+     * 描述：查询相关酒店的列表,并分页
+     */
+    @GetMapping("/hotelId/{hotelId}/page/{current}/{size}")
+    public JsonResponse getListPageByHotelId(@PathVariable Long hotelId, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<Orders> page = new Page<>(current, size);
+        ordersService.page(page, new QueryWrapper<Orders>().eq("hotel_id",hotelId));
+        return JsonResponse.success(page);
+    }
+    /**
+     * 描述：查询整个列表
+     */
+    @GetMapping("/ordersVo")
+    public JsonResponse getOrdersVoList() throws Exception {
+        List<OrdersVo> ordersList = ordersService.listOrdersVo();
+        return JsonResponse.success(ordersList);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/ordersVo/page/{current}/{size}")
+    public JsonResponse getOrdersVoListPage(@PathVariable long current, @PathVariable long size) throws Exception {
+        Page<Orders> page = new Page<>(current, size);
+        ordersService.page(page);
+        return JsonResponse.success(page);
+    }
+
+//    /**
+//     * 描述：查询相关用户的整个列表
+//     */
+//    @GetMapping("/ordersVo/userId/{userId}")
+//    public JsonResponse getOrdersVoListByUserId(@PathVariable Long userId) throws Exception {
+//        List<Orders> ordersList = ordersService.list(new QueryWrapper<Orders>().eq("user_id",userId));
+//        return JsonResponse.success(ordersList);
+//    }
+
+    /**
+     * 描述：查询相关用户的列表,并分页
+     */
+    @GetMapping("/ordersVo/userId/{userId}/page/{current}/{size}")
+    public JsonResponse getOrdersVoPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<OrdersVo> page = new Page<>(current, size);
+        ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().eq("user_id",userId));
+        return JsonResponse.success(page);
+    }
+
+//    /**
+//     * 描述：查询相关酒店的整个列表
+//     */
+//    @GetMapping("/ordersVo/hotelId/{hotelId}")
+//    public JsonResponse getOrdersVoListByHotelId(@PathVariable Long hotelId) throws Exception {
+//        List<Orders> ordersList = ordersService.list(new QueryWrapper<Orders>().eq("hotel_id",hotelId));
+//        return JsonResponse.success(ordersList);
+//    }
+
+    /**
+     * 描述：查询相关酒店的列表,并分页
+     */
+    @GetMapping("/ordersVo/hotelId/{hotelId}/page/{current}/{size}")
+    public JsonResponse getOrdersVoPageByHotelId(@PathVariable Long hotelId, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<OrdersVo> page = new Page<>(current, size);
+        ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().eq("hotel_id",hotelId));
+        return JsonResponse.success(page);
+    }
     /**
      * 描述：根据Id 查询
      */
@@ -94,7 +176,7 @@ public class OrdersController {
      * 描述：根据Id 更新
      */
     @PutMapping("")
-    public JsonResponse updateByOrdersId(Orders orders) throws Exception {
+    public JsonResponse updateByOrdersId(@RequestBody Orders orders) throws Exception {
         if (ordersService.updateById(orders)) {
             return JsonResponse.success(orders, "修改成功！");
         } else {
@@ -106,13 +188,17 @@ public class OrdersController {
      * 描述：根据Id 更新
      */
     @PutMapping("cancel/{ordersId}")
+    @Transactional
     public JsonResponse cancelOrdersByOrdersId(@PathVariable Long ordersId) throws Exception {
         Orders orders = ordersService.getById(ordersId);
         if (orders.getStatusId() != 1) {
             return JsonResponse.failure("该订单不可取消！");
         }
-        orders.setStatusId(4);
+        orders.setStatusId(3);
         if (ordersService.updateById(orders)) {
+            Room room = roomService.getOne(new QueryWrapper<Room>().eq("room_id", orders.getRoomId()));
+            room.setRemainQuantity(room.getRemainQuantity() + orders.getQuantity());
+            roomService.updateById(room);
             return JsonResponse.success(orders, "取消成功！");
         } else {
             return JsonResponse.failure("取消失败！");
@@ -124,7 +210,15 @@ public class OrdersController {
      * 描述:创建Orders
      */
     @PostMapping("")
-    public JsonResponse create(Orders orders) throws Exception {
+    @Transactional
+    public JsonResponse create(@RequestBody Orders orders) throws Exception {
+        Room room = roomService.getOne(new QueryWrapper<Room>().eq("room_id", orders.getRoomId()));
+        if (room.getRemainQuantity() >= orders.getQuantity()) {
+            room.setRemainQuantity(room.getRemainQuantity() - orders.getQuantity());
+            roomService.updateById(room);
+        }else {
+            return JsonResponse.failure("该房间数量不足，下单失败！");
+        }
         if (ordersService.save(orders)) {
             return JsonResponse.success(orders, "添加成功！");
         } else {

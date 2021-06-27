@@ -28,4 +28,20 @@
         WHERE r.role_id=#{roleId}
     </select>
 
+    <select id="selectMenuVoListByUserId" resultType="com.fang.hotel_order_system.entity.vo.MenuVo">
+        SELECT p.*
+        FROM user u
+        LEFT JOIN user_role ur ON u.user_id=ur.user_id
+        LEFT JOIN role r ON ur.role_id=r.role_id
+        LEFT JOIN role_permission rp ON rp.role_id=r.role_id
+        LEFT JOIN permission p ON p.permission_id =rp.permission_id
+        WHERE u.user_id=#{userId}
+    </select>
+
+    <select id="selectChildrenListByPermissionId" resultType="com.fang.hotel_order_system.entity.vo.MenuVo">
+        SELECT p.*
+        FROM permission p
+        WHERE p.pid=#{permissionId}
+    </select>
+
 </mapper>

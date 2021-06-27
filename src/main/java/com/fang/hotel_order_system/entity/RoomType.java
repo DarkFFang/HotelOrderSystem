@@ -37,6 +37,9 @@ public class RoomType extends Model<RoomType> {
     @ApiModelProperty(value = "最大入住数量")
     private Integer maxPeopleNumber;
 
+    @ApiModelProperty(value = "房型图片")
+    private String pic;
+
 
     @Override
     protected Serializable pkVal() {

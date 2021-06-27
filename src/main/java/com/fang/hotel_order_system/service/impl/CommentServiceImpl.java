@@ -21,13 +21,4 @@ import java.util.List;
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
-    @Override
-    public List<Comment> listByUserId(Long userId) {
-        return baseMapper.selectListByUserId(userId);
-    }
-
-    @Override
-    public IPage<Comment> pageByUserId(Page<Comment> page, Long userId) {
-        return baseMapper.selectPageByUserId(page,userId);
-    }
 }

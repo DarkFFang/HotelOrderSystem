@@ -4,18 +4,54 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.fang.hotel_order_system.entity.Hotel">
-        <id column="hotel_id" property="hotelId" />
-        <result column="city_id" property="cityId" />
-        <result column="hotel_name" property="hotelName" />
-        <result column="address" property="address" />
-        <result column="star_rank" property="starRank" />
-        <result column="longitude" property="longitude" />
-        <result column="latitude" property="latitude" />
-        <result column="description" property="description" />
-        <result column="brand" property="brand" />
-        <result column="pic1" property="pic1" />
-        <result column="pic2" property="pic2" />
-        <result column="is_deleted" property="isDeleted" />
+        <id column="hotel_id" property="hotelId"/>
+        <result column="city_id" property="cityId"/>
+        <result column="hotel_name" property="hotelName"/>
+        <result column="address" property="address"/>
+        <result column="star_rank" property="starRank"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="description" property="description"/>
+        <result column="brand" property="brand"/>
+        <result column="pic1" property="pic1"/>
+        <result column="pic2" property="pic2"/>
+        <result column="is_deleted" property="isDeleted"/>
     </resultMap>
+    <resultMap id="HotelVoResultMap" type="com.fang.hotel_order_system.entity.vo.HotelVo">
+        <id column="hotel_id" property="hotelId"/>
+        <result column="city_id" property="cityId"/>
+        <result column="hotel_name" property="hotelName"/>
+        <result column="address" property="address"/>
+        <result column="star_rank" property="starRank"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="description" property="description"/>
+        <result column="brand" property="brand"/>
+        <result column="pic1" property="pic1"/>
+        <result column="pic2" property="pic2"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="lowest_price" property="lowestPrice"/>
+    </resultMap>
+    <select id="selectHotelVoList" resultMap="HotelVoResultMap">
+        SELECT h.*,MIN(price) as lowest_price
+        FROM hotel h
+        LEFT JOIN room r
+        ON h.hotel_id=r.hotel_id
+        GROUP BY hotel_id
+    </select>
+    <select id="selectHotelVoPage" resultMap="HotelVoResultMap">
+        SELECT h.*,MIN(price) as lowest_price
+        FROM hotel h
+        LEFT JOIN room r
+        ON h.hotel_id=r.hotel_id
+        GROUP BY hotel_id
+    </select>
+    <select id="selectHotelVoPageByWrapper" resultMap="HotelVoResultMap">
+        SELECT h.*,MIN(price) as lowest_price
+        FROM hotel h
+        LEFT JOIN room r
+        ON h.hotel_id=r.hotel_id
+        ${ew.customSqlSegment}
+    </select>
 
 </mapper>

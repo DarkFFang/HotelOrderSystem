@@ -1,5 +1,6 @@
 package com.fang.hotel_order_system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.JwtUser;
 import com.fang.hotel_order_system.entity.Orders;
@@ -57,7 +58,7 @@ public class CommentController {
      */
     @GetMapping("/userId/{userId}")
     public JsonResponse getListByUserId(@PathVariable Long userId) throws Exception {
-        List<Comment> ordersList = commentService.listByUserId(userId);
+        List<Comment> ordersList = commentService.list(new QueryWrapper<Comment>().eq("user_id", userId));
         return JsonResponse.success(ordersList);
     }
 
@@ -67,10 +68,25 @@ public class CommentController {
     @GetMapping("/userId/{userId}/page/{current}/{size}")
     public JsonResponse getListPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<Comment> page = new Page<>(current, size);
-        commentService.pageByUserId(page, userId);
+        commentService.page(page, new QueryWrapper<Comment>().eq("user_id", userId));
         return JsonResponse.success(page);
     }
 
+    @GetMapping("/hotelId/{hotelId}")
+    public JsonResponse getListByHotelId(@PathVariable Long hotelId) throws Exception {
+        List<Comment> ordersList = commentService.list(new QueryWrapper<Comment>().eq("hotel_id", hotelId));
+        return JsonResponse.success(ordersList);
+    }
+
+    /**
+     * 描述：查询相关用户的列表,并分页
+     */
+    @GetMapping("/hotelId/{hotelId}/page/{current}/{size}")
+    public JsonResponse getListPageByHotelId(@PathVariable Long hotelId, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<Comment> page = new Page<>(current, size);
+        commentService.page(page, new QueryWrapper<Comment>().eq("hotel_id", hotelId));
+        return JsonResponse.success(page);
+    }
     /**
      * 描述：根据Id 查询
      */

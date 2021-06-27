@@ -63,4 +63,9 @@ class HotelOrderSystemApplicationTests {
                 .or().like("address", keyword)
                 .or().like("brand", keyword)));
     }
+
+    @Test
+    void menuTest() {
+        System.out.println(permissionService.listMenuByUserId(1L).toString());
+    }
 }
