@@ -51,11 +51,6 @@ class HotelOrderSystemApplicationTests {
     }
 
     @Test
-    void verifyCodeTest() {
-        mailService.sendVerifyCode("a123123sd@qq.com", "123456");
-    }
-
-    @Test
     void keywordList() {
         Page<Hotel> page = new Page<>(1, 5);
         String keyword = "成都";

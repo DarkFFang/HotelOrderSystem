@@ -1,7 +1,9 @@
 package com.fang.hotel_order_system.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.fang.hotel_order_system.entity.JwtUser;
 import com.fang.hotel_order_system.entity.User;
+import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.util.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,16 +50,18 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        JwtUser user = (JwtUser) authResult.getPrincipal();
-        System.out.println(user.toString());
-        String token = JwtTokenUtil.createToken(user);
+        JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
+        System.out.println(jwtUser.toString());
+        String token = JwtTokenUtil.createToken(jwtUser);
         response.setContentType("application/json; charset=utf-8");
         response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
+        response.getWriter().write(JSON.toJSONString(JsonResponse.success(jwtUser.getUser(), "登录成功！")));
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setContentType("application/json; charset=utf-8");
-        response.getWriter().write("authentication failed, reason: " + failed.getMessage());
+        response.getWriter().write(JSON.toJSONString(JsonResponse.failure(failed.getMessage())));
+
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MailServiceImpl implements MailService {
-    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${spring.mail.username}")
     private String from;
@@ -19,12 +19,12 @@ public class MailServiceImpl implements MailService {
     private JavaMailSender javaMailSender;
 
     @Override
-    public void sendVerifyCode(String to, String verifyCode) {
+    public void sendVerifyCode(String to, String keyMessage, String verifyCode) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setSubject("注册验证码");
+        simpleMailMessage.setSubject(keyMessage + "验证码");
         simpleMailMessage.setFrom(from);
         simpleMailMessage.setTo(to);
-        simpleMailMessage.setText("【酒店辅助订购系统】验证码"+verifyCode+"用于注册，有效时间5分钟。");
+        simpleMailMessage.setText("【酒店辅助订购系统】验证码" + verifyCode + "用于" + keyMessage + "，有效时间5分钟。若非本人操作，请无视这条消息。");
         javaMailSender.send(simpleMailMessage);
         logger.info("邮件发送。");
 
