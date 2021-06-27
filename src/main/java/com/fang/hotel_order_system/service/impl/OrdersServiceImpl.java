@@ -1,8 +1,10 @@
 package com.fang.hotel_order_system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.Orders;
+import com.fang.hotel_order_system.entity.vo.OrdersVo;
 import com.fang.hotel_order_system.mapper.OrdersMapper;
 import com.fang.hotel_order_system.service.OrdersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,12 +24,17 @@ import java.util.List;
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrdersService {
 
     @Override
-    public IPage<Orders> pageByUserId(Page<Orders> page, Long userId) {
-        return baseMapper.selectPageByUserId(page, userId);
+    public List<OrdersVo> listOrdersVo() {
+        return baseMapper.selectOrdersVoList();
     }
 
     @Override
-    public List<Orders> listByUserId(Long userId) {
-        return baseMapper.selectListByUserId(userId);
+    public IPage<OrdersVo> pageOrdersVo(Page<OrdersVo> page) {
+        return baseMapper.selectOrdersVoPage(page);
+    }
+
+    @Override
+    public IPage<OrdersVo> pageOrdersVo(Page<OrdersVo> page, Wrapper wrapper) {
+        return baseMapper.selectOrdersVoPageByWrapper(page, wrapper);
     }
 }

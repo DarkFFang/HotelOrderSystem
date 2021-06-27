@@ -8,8 +8,10 @@ import com.fang.hotel_order_system.entity.Role;
 import com.fang.hotel_order_system.entity.User;
 import com.fang.hotel_order_system.entity.dto.LoginDto;
 import com.fang.hotel_order_system.entity.dto.RegisterDto;
+import com.fang.hotel_order_system.entity.vo.MenuVo;
 import com.fang.hotel_order_system.entity.vo.UserVo;
 import com.fang.hotel_order_system.service.MailService;
+import com.fang.hotel_order_system.service.PermissionService;
 import com.fang.hotel_order_system.service.RoleService;
 import com.fang.hotel_order_system.service.UserService;
 import com.fang.hotel_order_system.util.JsonResponse;
@@ -50,6 +52,8 @@ public class UserController {
     @Autowired
     private MailService mailService;
     @Autowired
+    private PermissionService permissionService;
+    @Autowired
     private RedisTemplate redisTemplate;
 
     /**
@@ -72,6 +76,17 @@ public class UserController {
         userVo.setIsDeleted(user.getIsDeleted());
         userVo.setRoleList(roleList);
         return JsonResponse.success(userVo);
+    }
+
+    /**
+     * 获取当前用户信息
+     */
+    @GetMapping("/menu")
+    public JsonResponse getCurrentUserMenu() throws Exception {
+        JwtUser jwtUser = (JwtUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = jwtUser.getUser();
+        List<MenuVo> menuVoList=permissionService.listMenuByUserId(user.getUserId());
+        return JsonResponse.success(menuVoList);
     }
 
     /**
@@ -200,6 +215,7 @@ public class UserController {
     @PostMapping("/register")
     public JsonResponse register(@RequestBody RegisterDto registerDto) throws Exception {
         int count;
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         // 验证用户名是否注册
         count = userService.count(new QueryWrapper<User>().eq("username", registerDto.getUsername()));
@@ -232,7 +248,7 @@ public class UserController {
         user.setNickname(registerDto.getUsername());
         user.setEmail(registerDto.getEmail());
         user.setPhone(registerDto.getPhone());
-        user.setPassword(registerDto.getPassword());
+        user.setPassword(encoder.encode(registerDto.getPassword()));
         if (userService.save(user)) {
             return JsonResponse.success(registerDto, "注册成功！");
         } else {

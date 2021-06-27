@@ -16,8 +16,5 @@ import java.util.List;
  * @since 2021-06-14
  */
 public interface CommentService extends IService<Comment> {
-    List<Comment> listByUserId(Long userId);
-
-    IPage<Comment> pageByUserId(Page<Comment> page, Long userId);
 
 }

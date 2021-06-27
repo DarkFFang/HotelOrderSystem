@@ -34,6 +34,9 @@ public class Bed extends Model<Bed> {
     @ApiModelProperty(value = "床型名称")
     private String bedType;
 
+    @ApiModelProperty(value = "床型图片")
+    private String pic;
+
 
     @Override
     protected Serializable pkVal() {

@@ -6,13 +6,18 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.fang.hotel_order_system.config.AlipayConfig;
 import com.fang.hotel_order_system.entity.Orders;
+import com.fang.hotel_order_system.service.OrdersService;
 import com.fang.hotel_order_system.service.PayService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
 public class PayServiceImpl implements PayService {
+    @Autowired
+    private OrdersService ordersService;
+
     @Override
     public String pay(Orders orders) throws AlipayApiException, IOException {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, AlipayConfig.format, AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);

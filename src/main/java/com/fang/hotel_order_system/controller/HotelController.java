@@ -2,6 +2,8 @@ package com.fang.hotel_order_system.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fang.hotel_order_system.entity.vo.HotelVo;
+import com.fang.hotel_order_system.service.RoomService;
 import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,9 @@ public class HotelController {
     @Autowired
     private HotelService hotelService;
 
+    @Autowired
+    private RoomService roomService;
+
     /**
      * 描述：查询整个列表
      */
@@ -52,6 +57,25 @@ public class HotelController {
     }
 
     /**
+     * 描述：查询整个列表
+     */
+    @GetMapping("/hotelVo")
+    public JsonResponse getHotelVoList() throws Exception {
+        List<HotelVo> hotelList = hotelService.listHotelVo();
+        return JsonResponse.success(hotelList);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/hotelVo/page/{current}/{size}")
+    public JsonResponse getHotelVoListPage(@PathVariable long current, @PathVariable long size) throws Exception {
+        Page<HotelVo> page = new Page<>(current, size);
+        hotelService.pageHotelVo(page);
+        return JsonResponse.success(page);
+    }
+
+    /**
      * 描述：查询整个列表,并分页
      */
     @GetMapping("/keyword/{keyword}/page/{current}/{size}")
@@ -68,9 +92,76 @@ public class HotelController {
      * 描述：查询整个列表,并分页
      */
     @GetMapping("/starRank/{starRank}/page/{current}/{size}")
-    public JsonResponse getListPageByStatRank(@PathVariable Integer starRank, @PathVariable long current, @PathVariable long size) throws Exception {
+    public JsonResponse getListPageByStarRank(@PathVariable Integer starRank, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<Hotel> page = new Page<>(current, size);
         hotelService.page(page, new QueryWrapper<Hotel>().eq("star_rank", starRank));
+        return JsonResponse.success(page);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/hotelVo/keyword/{keyword}/page/{current}/{size}")
+    public JsonResponse getHotelVoListPageByKeyword(@PathVariable String keyword, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<HotelVo> page = new Page<>(current, size);
+        hotelService.pageHotelVo(page, new QueryWrapper<Hotel>().like("hotel_name", keyword)
+                .or().like("address", keyword)
+                .or().like("brand", keyword)
+                .or().like("description", keyword)
+                .groupBy("hotel_id"));
+        return JsonResponse.success(page);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/hotelVo/starRank/{starRank}/page/{current}/{size}")
+    public JsonResponse getHotelVoListPageByStarRank(@PathVariable Integer starRank, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<HotelVo> page = new Page<>(current, size);
+        hotelService.pageHotelVo(page, new QueryWrapper<HotelVo>().eq("star_rank", starRank).groupBy("hotel_id"));
+        return JsonResponse.success(page);
+    }
+
+    /**
+     * 描述：通过选项排序列表，并分页
+     */
+    @GetMapping("/hotelVo/option/{option}/sort/{sort}/page/{current}/{size}")
+    public JsonResponse getHotelVoListPageSortedByOption(@PathVariable String option, @PathVariable Boolean sort, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<HotelVo> page = new Page<>(current, size);
+        if (true == sort) {
+            hotelService.pageHotelVo(page, new QueryWrapper<HotelVo>().groupBy("hotel_id").orderByAsc(option));
+
+        } else {
+            hotelService.pageHotelVo(page, new QueryWrapper<HotelVo>().groupBy("hotel_id").orderByDesc(option));
+
+        }
+        return JsonResponse.success(page);
+    }
+    /**
+     * 描述：通过选项排序列表，并分页
+     */
+    @GetMapping("/hotelVo/keyword/{keyword}/option/{option}/sort/{sort}/page/{current}/{size}")
+    public JsonResponse getHotelVoListPageSortedByOptionAndKeyword(@PathVariable String keyword,@PathVariable String option, @PathVariable Boolean sort, @PathVariable long current, @PathVariable long size) throws Exception {
+        Page<HotelVo> page = new Page<>(current, size);
+        if (true == sort) {
+            hotelService.pageHotelVo(page, new QueryWrapper<HotelVo>()
+                    .like("hotel_name", keyword)
+                    .or().like("address", keyword)
+                    .or().like("brand", keyword)
+                    .or().like("description", keyword)
+                    .groupBy("hotel_id")
+                    .orderByAsc(option));
+
+        } else {
+            hotelService.pageHotelVo(page, new QueryWrapper<HotelVo>()
+                    .like("hotel_name", keyword)
+                    .or().like("address", keyword)
+                    .or().like("brand", keyword)
+                    .or().like("description", keyword)
+                    .groupBy("hotel_id")
+                    .orderByDesc(option));
+
+        }
         return JsonResponse.success(page);
     }
 

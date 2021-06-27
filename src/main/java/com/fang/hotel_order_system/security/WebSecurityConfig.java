@@ -6,6 +6,7 @@ import com.fang.hotel_order_system.service.PermissionService;
 import com.fang.hotel_order_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -65,7 +66,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
     /**
      * 配置
      *
@@ -91,7 +91,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/loginByVerifyCode").permitAll()
                 .antMatchers("/api/user//sendLoginVerifyCode").permitAll()
                 .antMatchers("/api/user/register").permitAll()
-                .antMatchers("/api/user/sendVerifyCode").permitAll()
+                .antMatchers("/api/user/sendRegisterVerifyCode").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/hotel/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/bed/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/breakfast/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/room/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/roomType/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/city/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/country/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/comment/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();

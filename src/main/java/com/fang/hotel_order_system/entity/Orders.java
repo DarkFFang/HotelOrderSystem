@@ -52,11 +52,11 @@ public class Orders extends Model<Orders> {
     private Integer quantity;
 
     @ApiModelProperty(value = "入住时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private LocalDateTime inTime;
 
     @ApiModelProperty(value = "退房时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private LocalDateTime outTime;
 
     @ApiModelProperty(value = "价格")
