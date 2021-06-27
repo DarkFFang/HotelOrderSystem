@@ -25,5 +25,5 @@ public interface OrdersMapper extends BaseMapper<Orders> {
 
     IPage<OrdersVo> selectOrdersVoPage(Page<OrdersVo> page);
 
-    IPage<OrdersVo> selectOrdersVoPageByWrapper(Page<OrdersVo> page, Wrapper wrapper);
+    IPage<OrdersVo> selectOrdersVoPageByWrapper(Page<OrdersVo> page, Wrapper ew);
 }
