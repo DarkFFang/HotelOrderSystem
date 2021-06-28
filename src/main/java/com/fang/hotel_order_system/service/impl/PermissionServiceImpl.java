@@ -12,7 +12,7 @@ import java.util.*;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author fang
@@ -38,14 +38,39 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public List<MenuVo> listMenuByUserId(Long userId) {
         List<MenuVo> menuVoList = baseMapper.selectMenuVoListByUserId(userId);
-        for (MenuVo menuVo : menuVoList) {
-            List<MenuVo> children = baseMapper.selectChildrenListByPermissionId(menuVo.getPermissionId());
-            menuVo.setChildren(children);
-        }
+        menuVoList = findMenuVoChildren(menuVoList, menuVoList);
         Iterator<MenuVo> iterator = menuVoList.iterator();
         while (iterator.hasNext()) {
             MenuVo menuVo = iterator.next();
             if (menuVo.getPid() != 0) {
+                iterator.remove();
+            }
+        }
+        menuVoList = trimMenuVo(menuVoList);
+        return menuVoList;
+    }
+
+    private List<MenuVo> findMenuVoChildren(List<MenuVo> menuVoList, List<MenuVo> menuVoListResource) {
+        for (MenuVo menuVo : menuVoList) {
+            List<MenuVo> children = new ArrayList<>();
+            for (MenuVo menuVoResource : menuVoListResource) {
+                if (menuVoResource.getPid().equals(menuVo.getPermissionId())) {
+                    children.add(menuVoResource);
+                }
+            }
+            findMenuVoChildren(children, menuVoListResource);
+            menuVo.setChildren(children);
+        }
+        return menuVoList;
+    }
+
+    private List<MenuVo> trimMenuVo(List<MenuVo> menuVoList) {
+        Iterator<MenuVo> iterator = menuVoList.iterator();
+        while (iterator.hasNext()) {
+            MenuVo menuVo = iterator.next();
+            if (!menuVo.getChildren().isEmpty()) {
+                trimMenuVo(menuVo.getChildren());
+            } else {
                 iterator.remove();
             }
         }

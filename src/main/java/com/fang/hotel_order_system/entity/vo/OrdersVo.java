@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class OrdersVo extends Orders {
     private String hotelName;
+    private String username;
 }

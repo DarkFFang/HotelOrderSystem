@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.Room;
 import com.fang.hotel_order_system.entity.vo.OrdersVo;
 import com.fang.hotel_order_system.service.RoomService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
@@ -106,10 +107,15 @@ public class OrdersController {
     /**
      * 描述：查询整个列表,并分页
      */
-    @GetMapping("/ordersVo/page/{current}/{size}")
-    public JsonResponse getOrdersVoListPage(@PathVariable long current, @PathVariable long size) throws Exception {
-        Page<Orders> page = new Page<>(current, size);
-        ordersService.page(page);
+    @GetMapping("/ordersVo/keyword/page/{current}/{size}")
+    public JsonResponse getOrdersVoListPage(String keyword,@PathVariable long current, @PathVariable long size) throws Exception {
+        Page<OrdersVo> page = new Page<>(current, size);
+        if (StringUtils.isBlank(keyword)) {
+            ordersService.pageOrdersVo(page);
+        } else {
+            ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().like("hotel_name", keyword)
+                    .or().like("username", keyword));
+        }
         return JsonResponse.success(page);
     }
 
@@ -128,7 +134,7 @@ public class OrdersController {
     @GetMapping("/ordersVo/userId/{userId}/page/{current}/{size}")
     public JsonResponse getOrdersVoPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<OrdersVo> page = new Page<>(current, size);
-        ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().eq("user_id",userId));
+        ordersService.pageOrdersVo(page, new QueryWrapper<OrdersVo>().eq("o.user_id",userId));
         return JsonResponse.success(page);
     }
 

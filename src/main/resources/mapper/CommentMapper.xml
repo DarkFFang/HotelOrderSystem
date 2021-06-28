@@ -31,12 +31,15 @@
         FROM comment c
         LEFT JOIN hotel h ON c.hotel_id=h.hotel_id
         LEFT JOIN user u ON c.user_id=u.user_id
+        WHERE c.is_deleted=0
     </select>
     <select id="selectCommentVoPage" resultMap="CommentVoResultMap">
         SELECT c.*,u.icon,u.nickname,h.hotel_name
         FROM comment c
         LEFT JOIN hotel h ON c.hotel_id=h.hotel_id
         LEFT JOIN user u ON c.user_id=u.user_id
+        WHERE c.is_deleted=0
+
     </select>
     <select id="selectCommentVoPageByWrapper" resultMap="CommentVoResultMap">
         SELECT c.*,u.icon,u.nickname,h.hotel_name
@@ -44,5 +47,6 @@
         LEFT JOIN hotel h ON c.hotel_id=h.hotel_id
         LEFT JOIN user u ON c.user_id=u.user_id
         ${ew.customSqlSegment}
+        AND c.is_deleted=0
     </select>
 </mapper>

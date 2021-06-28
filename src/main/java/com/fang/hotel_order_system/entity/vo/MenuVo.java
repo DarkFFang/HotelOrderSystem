@@ -8,5 +8,13 @@ import java.util.List;
 @Data
 public class MenuVo extends Permission {
     List<MenuVo> children;
+
+    @Override
+    public String toString() {
+        return "MenuVo{" +
+                super.toString() +
+                ", children=" + children +
+                '}';
+    }
 }
 

@@ -10,20 +10,19 @@ import com.fang.hotel_order_system.entity.dto.LoginDto;
 import com.fang.hotel_order_system.entity.dto.RegisterDto;
 import com.fang.hotel_order_system.entity.vo.MenuVo;
 import com.fang.hotel_order_system.entity.vo.UserVo;
-import com.fang.hotel_order_system.service.MailService;
-import com.fang.hotel_order_system.service.PermissionService;
-import com.fang.hotel_order_system.service.RoleService;
-import com.fang.hotel_order_system.service.UserService;
+import com.fang.hotel_order_system.service.*;
 import com.fang.hotel_order_system.util.JsonResponse;
 import com.fang.hotel_order_system.util.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +48,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private UserRoleService userRoleService;
     @Autowired
     private MailService mailService;
     @Autowired
@@ -85,7 +86,7 @@ public class UserController {
     public JsonResponse getCurrentUserMenu() throws Exception {
         JwtUser jwtUser = (JwtUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         User user = jwtUser.getUser();
-        List<MenuVo> menuVoList=permissionService.listMenuByUserId(user.getUserId());
+        List<MenuVo> menuVoList = permissionService.listMenuByUserId(user.getUserId());
         return JsonResponse.success(menuVoList);
     }
 
@@ -105,6 +106,25 @@ public class UserController {
     public JsonResponse getListPage(@PathVariable long current, @PathVariable long size) throws Exception {
         Page<UserVo> page = new Page<>(current, size);
         userService.pageUserVo(page);
+        return JsonResponse.success(page);
+    }
+
+    /**
+     * 描述：查询整个列表,并分页
+     */
+    @GetMapping("/keyword/page/{current}/{size}")
+    public JsonResponse getListPage(String keyword, @PathVariable long current, @PathVariable long size) throws Exception {
+
+        Page<UserVo> page = new Page<>(current, size);
+        if (StringUtils.isBlank(keyword)) {
+            userService.pageUserVo(page);
+        } else {
+            userService.pageUserVo(page, new QueryWrapper<UserVo>()
+                    .like("username", keyword)
+                    .or().like("email", keyword)
+                    .or().like("phone", keyword)
+                    .or().like("nickname", keyword));
+        }
         return JsonResponse.success(page);
     }
 
@@ -135,8 +155,10 @@ public class UserController {
      */
     @PutMapping("")
     public JsonResponse updateByUserId(User user) throws Exception {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
+        if (StringUtils.isNotBlank(user.getPassword())) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setPassword(encoder.encode(user.getPassword()));
+        }
         if (userService.updateById(user)) {
             return JsonResponse.success(user, "修改成功！");
         } else {
@@ -213,6 +235,7 @@ public class UserController {
      * 描述:注册
      */
     @PostMapping("/register")
+    @Transactional
     public JsonResponse register(@RequestBody RegisterDto registerDto) throws Exception {
         int count;
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -249,7 +272,9 @@ public class UserController {
         user.setEmail(registerDto.getEmail());
         user.setPhone(registerDto.getPhone());
         user.setPassword(encoder.encode(registerDto.getPassword()));
+        Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_name", "普通用户"));
         if (userService.save(user)) {
+            userRoleService.updateByUserId(user.getUserId(), new Long[]{role.getRoleId()});
             return JsonResponse.success(registerDto, "注册成功！");
         } else {
             return JsonResponse.failure("注册失败！");

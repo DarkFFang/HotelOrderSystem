@@ -37,6 +37,7 @@
         FROM hotel h
         LEFT JOIN room r
         ON h.hotel_id=r.hotel_id
+        WHERE is_deleted=0
         GROUP BY hotel_id
     </select>
     <select id="selectHotelVoPage" resultMap="HotelVoResultMap">
@@ -44,6 +45,7 @@
         FROM hotel h
         LEFT JOIN room r
         ON h.hotel_id=r.hotel_id
+        WHERE is_deleted=0
         GROUP BY hotel_id
     </select>
     <select id="selectHotelVoPageByWrapper" resultMap="HotelVoResultMap">

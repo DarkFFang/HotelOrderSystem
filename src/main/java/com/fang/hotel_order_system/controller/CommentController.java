@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.JwtUser;
 import com.fang.hotel_order_system.entity.Orders;
 import com.fang.hotel_order_system.entity.vo.CommentVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
@@ -88,10 +89,12 @@ public class CommentController {
         commentService.page(page, new QueryWrapper<Comment>().eq("hotel_id", hotelId));
         return JsonResponse.success(page);
     }
+
+
     /**
      * 描述：查询整个列表
      */
-    @GetMapping("commentVo/")
+    @GetMapping("/commentVo")
     public JsonResponse getCommentVoVoList() throws Exception {
         List<CommentVo> commentList = commentService.listCommentVo();
         return JsonResponse.success(commentList);
@@ -100,7 +103,7 @@ public class CommentController {
     /**
      * 描述：查询整个列表,并分页
      */
-    @GetMapping("commentVo/page/{current}/{size}")
+    @GetMapping("/commentVo/page/{current}/{size}")
     public JsonResponse getCommentVoPage(@PathVariable long current, @PathVariable long size) throws Exception {
         Page<CommentVo> page = new Page<>(current, size);
         commentService.pageCommentVo(page);
@@ -119,10 +122,10 @@ public class CommentController {
     /**
      * 描述：查询相关用户的列表,并分页
      */
-    @GetMapping("commentVo/userId/{userId}/page/{current}/{size}")
+    @GetMapping("/commentVo/userId/{userId}/page/{current}/{size}")
     public JsonResponse getCommentVoPageByUserId(@PathVariable Long userId, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<CommentVo> page = new Page<>(current, size);
-        commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("user_id", userId));
+        commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("c.user_id", userId));
         return JsonResponse.success(page);
     }
 
@@ -135,12 +138,24 @@ public class CommentController {
     /**
      * 描述：查询相关用户的列表,并分页
      */
-    @GetMapping("commentVo/hotelId/{hotelId}/page/{current}/{size}")
-    public JsonResponse getCommentVoPageByHotelId(@PathVariable Long hotelId, @PathVariable long current, @PathVariable long size) throws Exception {
+    @GetMapping("/commentVo/rank/hotelId/{hotelId}/page/{current}/{size}")
+    public JsonResponse getCommentVoPageByHotelId(String rank, @PathVariable Long hotelId, @PathVariable long current, @PathVariable long size) throws Exception {
         Page<CommentVo> page = new Page<>(current, size);
-        commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("hotel_id", hotelId));
+        if (StringUtils.isBlank(rank)) {
+            commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("c.hotel_id", hotelId));
+        } else if (rank.equals("high")) {
+            commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("c.hotel_id", hotelId)
+                    .and(i -> i.ge("score", 4)));
+        } else if (rank.equals("mid")) {
+            commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("c.hotel_id", hotelId)
+                    .and(i -> i.between("score", 2, 4)));
+        } else if (rank.equals("low")) {
+            commentService.pageCommentVo(page, new QueryWrapper<CommentVo>().eq("c.hotel_id", hotelId)
+                    .and(i -> i.le("score", 2)));
+        }
         return JsonResponse.success(page);
     }
+
     /**
      * 描述：根据Id 查询
      */

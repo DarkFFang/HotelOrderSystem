@@ -39,6 +39,7 @@
         ON u.user_id=ur.user_id
         LEFT JOIN role r
         ON ur.role_id=r.role_id
+        WHERE is_deleted=0
     </select>
     <select id="selectUserVoPage" resultMap="UserVoResultMap">
         SELECT u.*,r.*
@@ -47,5 +48,16 @@
         ON u.user_id=ur.user_id
         LEFT JOIN role r
         ON ur.role_id=r.role_id
+        WHERE is_deleted=0
+    </select>
+    <select id="selectUserVoPageByWrapper" resultMap="UserVoResultMap">
+        SELECT u.*,r.*
+        FROM user u
+        LEFT JOIN user_role ur
+        ON u.user_id=ur.user_id
+        LEFT JOIN role r
+        ON ur.role_id=r.role_id
+        ${ew.customSqlSegment}
+        AND is_deleted=0
     </select>
 </mapper>

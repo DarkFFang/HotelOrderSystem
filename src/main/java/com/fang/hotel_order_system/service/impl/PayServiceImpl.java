@@ -66,7 +66,7 @@ public class PayServiceImpl implements PayService {
 
     @Override
     public JsonResponse notifyInfo(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("收到支付宝异步回调 start...");
+        logger.warn("收到支付宝异步回调 start...");
         //接收参数进行校验
         Map<String, String> parameters = new HashMap<>();
         Map<String, String[]> requestParams = request.getParameterMap();
@@ -100,7 +100,7 @@ public class PayServiceImpl implements PayService {
         String tradeStatus = request.getParameter("trade_status");
         BigDecimal totalAmount = new BigDecimal(request.getParameter("total_amount"));
         BigDecimal receiptAmount = new BigDecimal(request.getParameter("receipt_amount"));
-        logger.info("交易状态:{},支付金额为：{},实付金额为：{}", tradeStatus, totalAmount, receiptAmount);
+        logger.warn("交易状态:{},支付金额为：{},实付金额为：{}", tradeStatus, totalAmount, receiptAmount);
 
 
         System.out.println(appId);

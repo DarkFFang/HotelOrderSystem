@@ -4,44 +4,49 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.fang.hotel_order_system.entity.Orders">
-        <id column="orders_id" property="ordersId" />
-        <result column="user_id" property="userId" />
-        <result column="hotel_id" property="hotelId" />
-        <result column="room_id" property="roomId" />
-        <result column="in_time" property="inTime" />
-        <result column="out_time" property="outTime" />
-        <result column="price" property="price" />
-        <result column="status" property="status" />
-        <result column="create_time" property="createTime" />
+        <id column="orders_id" property="ordersId"/>
+        <result column="user_id" property="userId"/>
+        <result column="hotel_id" property="hotelId"/>
+        <result column="room_id" property="roomId"/>
+        <result column="in_time" property="inTime"/>
+        <result column="out_time" property="outTime"/>
+        <result column="price" property="price"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
 
     <!-- 通用查询映射结果 -->
     <resultMap id="OrdersVoResultMap" type="com.fang.hotel_order_system.entity.vo.OrdersVo">
-        <id column="orders_id" property="ordersId" />
-        <result column="user_id" property="userId" />
-        <result column="hotel_id" property="hotelId" />
-        <result column="hotel_name" property="hotelName" />
-        <result column="room_id" property="roomId" />
-        <result column="in_time" property="inTime" />
-        <result column="out_time" property="outTime" />
-        <result column="price" property="price" />
-        <result column="status" property="status" />
-        <result column="create_time" property="createTime" />
+        <id column="orders_id" property="ordersId"/>
+        <result column="user_id" property="userId"/>
+        <result column="hotel_id" property="hotelId"/>
+        <result column="room_id" property="roomId"/>
+        <result column="in_time" property="inTime"/>
+        <result column="out_time" property="outTime"/>
+        <result column="price" property="price"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="hotel_name" property="hotelName"/>
+        <result column="username" property="username"/>
     </resultMap>
     <select id="selectOrdersVoList" resultMap="OrdersVoResultMap">
-        SELECT o.*,h.hotel_name
+        SELECT o.*,h.hotel_name,u.username
         FROM orders o
         LEFT JOIN hotel h ON o.hotel_id=h.hotel_id
+        LEFT JOIN user u ON o.user_id=u.user_id
     </select>
     <select id="selectOrdersVoPage" resultMap="OrdersVoResultMap">
-        SELECT o.*,h.hotel_name
+        SELECT o.*,h.hotel_name,u.username
         FROM orders o
         LEFT JOIN hotel h ON o.hotel_id=h.hotel_id
+        LEFT JOIN user u ON o.user_id=u.user_id
     </select>
     <select id="selectOrdersVoPageByWrapper" resultMap="OrdersVoResultMap">
-        SELECT o.*,h.hotel_name
-        FROM orders o
-        LEFT JOIN hotel h ON o.hotel_id=h.hotel_id
+        SELECT o.*,h.hotel_name,u.username
+        FROM orders o,hotel h,user u
         ${ew.customSqlSegment}
+        AND
+        o.hotel_id=h.hotel_id AND o.user_id=u.user_id
+
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.fang.hotel_order_system.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fang.hotel_order_system.entity.User;
@@ -21,5 +22,6 @@ public interface UserService extends IService<User>, UserDetailsService {
     List<UserVo> listUserVo();
 
     IPage<UserVo> pageUserVo(Page<UserVo> page);
+    IPage<UserVo> pageUserVo(Page<UserVo> page, Wrapper wrapper);
 
 }

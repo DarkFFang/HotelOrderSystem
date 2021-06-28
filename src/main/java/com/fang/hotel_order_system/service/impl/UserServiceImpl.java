@@ -1,5 +1,6 @@
 package com.fang.hotel_order_system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -62,5 +63,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public IPage<UserVo> pageUserVo(Page<UserVo> page) {
         return baseMapper.selectUserVoPage(page);
+    }
+
+    @Override
+    public IPage<UserVo> pageUserVo(Page<UserVo> page, Wrapper wrapper) {
+        return baseMapper.selectUserVoPageByWrapper(page, wrapper);
     }
 }
